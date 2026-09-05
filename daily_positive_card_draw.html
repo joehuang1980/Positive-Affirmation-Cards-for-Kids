@@ -155,12 +155,16 @@ function renderParentObservation(){
 }
 function setSyncStatus(message,isError=false){const box=el('syncStatus');if(!box)return;box.textContent=message;box.classList.toggle('error',isError)}
 function getSyncConfig(){const cfg=state.sync||{};return {scriptUrl:(cfg.scriptUrl||'').trim(),familyKey:(cfg.familyKey||'').trim()}}
+function assertSyncConfig(cfg){if(!cfg.scriptUrl||!cfg.familyKey)throw new Error('請先設定 Google Apps Script 網址與家庭代碼');if(!cfg.scriptUrl.includes('/exec'))throw new Error('請貼上 Web App URL（需包含 /exec）')}
+async function parseJsonOrThrow(res){const text=await res.text();let data=null;try{data=JSON.parse(text)}catch(e){throw new Error('伺服器回傳格式錯誤，請確認 Apps Script 已正確部署為 Web App')}if(data&&data.ok===false)throw new Error(data.message||'雲端服務回傳失敗');return data}
+function loadByJsonp(url,familyKey){return new Promise((resolve,reject)=>{const callbackName=`syncCb_${Date.now()}_${Math.floor(Math.random()*10000)}`;const script=document.createElement('script');const cleanup=()=>{if(script.parentNode)script.parentNode.removeChild(script);try{delete window[callbackName]}catch(e){window[callbackName]=undefined}};window[callbackName]=(payload)=>{cleanup();resolve(payload)};script.onerror=()=>{cleanup();reject(new Error('無法讀取雲端資料，請確認 Web App 權限為 Anyone'))};const u=new URL(url);u.searchParams.set('action','load');u.searchParams.set('familyKey',familyKey);u.searchParams.set('callback',callbackName);script.src=u.toString();document.body.appendChild(script)})}
 function normalizeRemoteState(raw){if(!raw||typeof raw!=='object')return null;const base={deck:[],pos:0,history:{},completed:{},notes:{},drawers:{},showZh:true,updatedAt:0};const merged=Object.assign(base,raw);if(!Array.isArray(merged.deck))merged.deck=[];if(typeof merged.pos!=='number')merged.pos=0;if(!merged.history||typeof merged.history!=='object')merged.history={};if(!merged.completed||typeof merged.completed!=='object')merged.completed={};if(!merged.notes||typeof merged.notes!=='object')merged.notes={};if(!merged.drawers||typeof merged.drawers!=='object')merged.drawers={};merged.updatedAt=Number(merged.updatedAt||0);return merged}
 function exportStateForCloud(){return {deck:state.deck,pos:state.pos,history:state.history,completed:state.completed,notes:state.notes,drawers:state.drawers,showZh:state.showZh,updatedAt:state.updatedAt}}
 function renderFromState(){const existing=todayIndex();if(existing!==null){showCard(existing,false);return}current=null;el('cardShell').classList.remove('revealed');el('drawBtn').disabled=false;el('drawBtn').textContent='✨ 抽取今天的卡';el('completeBtn').disabled=true;el('completeBtn').textContent='✓ 我完成今日挑戰了';el('infoContent').hidden=true;el('infoPlaceholder').hidden=false;el('drawerSelect').disabled=false;if(state.drawers[dateKey()])el('drawerSelect').value=state.drawers[dateKey()];else el('drawerSelect').value='';applyZh();updateStats()}
 function mergeRemoteState(remote){const normalized=normalizeRemoteState(remote);if(!normalized)return false;const localUpdatedAt=Number(state.updatedAt||0);if(normalized.updatedAt<=localUpdatedAt)return false;const keepSync=state.sync||{scriptUrl:'',familyKey:''};state=Object.assign({},state,normalized,{sync:keepSync});save(false);return true}
 async function pullFromCloud(silent=false){const cfg=getSyncConfig();if(!cfg.scriptUrl||!cfg.familyKey){if(!silent)setSyncStatus('請先設定 Google Apps Script 網址與家庭代碼',true);return false}const loadUrl=new URL(cfg.scriptUrl);loadUrl.searchParams.set('action','load');loadUrl.searchParams.set('familyKey',cfg.familyKey);const res=await fetch(loadUrl.toString(),{method:'GET'});if(!res.ok)throw new Error('無法讀取雲端資料');const data=await res.json();const remote=data&&data.state?data.state:null;const changed=mergeRemoteState(remote);if(changed)renderFromState();if(!silent)setSyncStatus(changed?'已從雲端更新到最新':'雲端資料已是最新');return changed}
-async function pushToCloud(silent=false){const cfg=getSyncConfig();if(!cfg.scriptUrl||!cfg.familyKey){if(!silent)setSyncStatus('請先設定 Google Apps Script 網址與家庭代碼',true);return false}const payload={action:'save',familyKey:cfg.familyKey,state:exportStateForCloud()};const res=await fetch(cfg.scriptUrl,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});if(!res.ok)throw new Error('無法寫入雲端資料');const data=await res.json();if(data&&data.updatedAt&&Number(data.updatedAt)>Number(state.updatedAt||0)){state.updatedAt=Number(data.updatedAt);save(false)}if(!silent)setSyncStatus('已成功同步到雲端');return true}
+async function pullFromCloud(silent=false){const cfg=getSyncConfig();try{assertSyncConfig(cfg)}catch(err){if(!silent)setSyncStatus(err.message,true);return false}try{const loadUrl=new URL(cfg.scriptUrl);loadUrl.searchParams.set('action','load');loadUrl.searchParams.set('familyKey',cfg.familyKey);const res=await fetch(loadUrl.toString(),{method:'GET',cache:'no-store'});if(!res.ok)throw new Error('無法讀取雲端資料');const data=await parseJsonOrThrow(res);const remote=data&&data.state?data.state:null;const changed=mergeRemoteState(remote);if(changed)renderFromState();if(!silent)setSyncStatus(changed?'已從雲端更新到最新':'雲端資料已是最新');return changed}catch(primaryErr){const data=await loadByJsonp(cfg.scriptUrl,cfg.familyKey);const remote=data&&data.state?data.state:null;const changed=mergeRemoteState(remote);if(changed)renderFromState();if(!silent)setSyncStatus(changed?'已從雲端更新到最新':'雲端資料已是最新');return changed}}
+async function pushToCloud(silent=false){const cfg=getSyncConfig();try{assertSyncConfig(cfg)}catch(err){if(!silent)setSyncStatus(err.message,true);return false}const payload={action:'save',familyKey:cfg.familyKey,state:exportStateForCloud()};try{const res=await fetch(cfg.scriptUrl,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});if(!res.ok)throw new Error('無法寫入雲端資料');const data=await parseJsonOrThrow(res);if(data&&data.updatedAt&&Number(data.updatedAt)>Number(state.updatedAt||0)){state.updatedAt=Number(data.updatedAt);save(false)}if(!silent)setSyncStatus('已成功同步到雲端');return true}catch(primaryErr){await fetch(cfg.scriptUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});if(!silent)setSyncStatus('已送出同步請求（請稍後在另一台按一次「雲端同步」更新）');return true}}
 async function syncNow(){try{setSyncStatus('同步中...');await pullFromCloud(true);await pushToCloud(true);setSyncStatus('同步完成，跨裝置可見')}catch(err){setSyncStatus(`同步失敗：${err.message}`,true)}}
 function scheduleCloudPush(){const cfg=getSyncConfig();if(!cfg.scriptUrl||!cfg.familyKey)return;if(syncTimer)clearTimeout(syncTimer);syncTimer=setTimeout(()=>{pushToCloud(true).then(()=>setSyncStatus('已自動同步到雲端')).catch(err=>setSyncStatus(`自動同步失敗：${err.message}`,true))},900)}
 function scriptTemplate(){return `function doGet(e) {
@@ -168,10 +172,13 @@ function scriptTemplate(){return `function doGet(e) {
   if (sheet.getLastRow() === 0) sheet.appendRow(['familyKey','stateJson','updatedAt']);
   const action = (e.parameter.action || '').trim();
   const familyKey = (e.parameter.familyKey || '').trim();
+  const callback = (e.parameter.callback || '').trim();
   if (action === 'load') {
     const row = findRow_(sheet, familyKey);
     const stateJson = row > 0 ? String(sheet.getRange(row, 2).getValue() || '{}') : '{}';
-    return json_({ ok: true, state: JSON.parse(stateJson) });
+    const payload = { ok: true, state: JSON.parse(stateJson) };
+    if (callback) return jsonp_(callback, payload);
+    return json_(payload);
   }
   return json_({ ok: false, message: 'Unsupported action' });
 }
@@ -208,8 +215,14 @@ function json_(obj) {
   return ContentService
     .createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+function jsonp_(callback, obj) {
+  return ContentService
+    .createTextOutput(callback + '(' + JSON.stringify(obj) + ')')
+    .setMimeType(ContentService.MimeType.JAVASCRIPT);
 }`}
-function showSyncHelp(){alert('請建立一個 Google Sheet，開啟 Apps Script，貼上範本程式並部署成 Web App（Anyone 可存取）。接著把 Web App URL 貼到本頁「Google Apps Script 網址」。');console.log(scriptTemplate())}
+function showSyncHelp(){alert('請建立一個 Google Sheet，開啟 Apps Script，貼上範本程式並部署成 Web App（Anyone 可存取）。每次修改 Apps Script 後要「新增部署新版本」。接著把 /exec 的 Web App URL 貼到本頁。');console.log(scriptTemplate())}
 function autoSyncOnLoad(){const cfg=getSyncConfig();if(!cfg.scriptUrl||!cfg.familyKey){setSyncStatus('尚未設定雲端同步');return}syncNow()}
 function drawToday(){const dk=dateKey();let idx=state.history[dk];if(idx===undefined){const drawer=el('drawerSelect').value;if(!drawer){alert('請先選擇翻卡人！');return}ensureDeck();idx=state.deck[state.pos++];state.history[dk]=idx;state.drawers[dk]=drawer;save();burst()}showCard(idx,true)}
 function showCard(idx,animate=false){current=idx;const c=CARDS[idx];el('cardImage').src='data:image/jpeg;base64,'+c.img;el('enTitle').textContent=c.en;el('zhTitle').textContent=c.zh;el('enChallenge').textContent=c.challenge;el('zhChallenge').textContent=c.zhChallenge;el('infoPlaceholder').hidden=true;el('infoContent').hidden=false;el('reflection').value=state.notes[dateKey()]||'';const _dk=dateKey();if(state.drawers[_dk])el('drawerSelect').value=state.drawers[_dk];el('drawerSelect').disabled=true;el('cardShell').classList.add('revealed');el('drawBtn').textContent='🌟 今天的卡已抽出';el('drawBtn').disabled=true;syncComplete();applyZh();updateStats();if(animate)setTimeout(()=>el('infoContent').scrollIntoView({behavior:'smooth',block:'nearest'}),500)}

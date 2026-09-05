@@ -4,17 +4,20 @@ function doGet(e) {
 
   const action = (e.parameter.action || '').trim();
   const familyKey = (e.parameter.familyKey || '').trim();
+  const callback = (e.parameter.callback || '').trim();
   if (action !== 'load' || !familyKey) {
     return json_({ ok: false, message: 'Invalid request' });
   }
 
   const row = findRow_(sheet, familyKey);
   const stateJson = row > 0 ? String(sheet.getRange(row, 2).getValue() || '{}') : '{}';
-  return json_({ ok: true, state: JSON.parse(stateJson) });
+  const payload = { ok: true, state: JSON.parse(stateJson) };
+  if (callback) return jsonp_(callback, payload);
+  return json_(payload);
 }
 
 function doPost(e) {
-  const body = JSON.parse((e.postData && e.postData.contents) || '{}');
+  const body = parseBody_(e);
   const action = (body.action || '').trim();
   const familyKey = (body.familyKey || '').trim();
   const state = body.state || {};
@@ -51,4 +54,26 @@ function json_(obj) {
   return ContentService
     .createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+function jsonp_(callback, obj) {
+  return ContentService
+    .createTextOutput(callback + '(' + JSON.stringify(obj) + ')')
+    .setMimeType(ContentService.MimeType.JAVASCRIPT);
+}
+
+function parseBody_(e) {
+  try {
+    const text = (e.postData && e.postData.contents) || '';
+    if (text) return JSON.parse(text);
+  } catch (err) {
+  }
+  const p = e.parameter || {};
+  if (p.payload) {
+    try {
+      return JSON.parse(p.payload);
+    } catch (err) {
+    }
+  }
+  return p;
 }
