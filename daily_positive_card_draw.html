@@ -20,7 +20,7 @@ body{padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
 .info h2{margin:0 0 4px;font-size:25px}.en{font-size:18px;font-weight:800;letter-spacing:.02em;color:#5f4877;margin:7px 0 0}.challenge{margin:16px 0 0;padding:14px 15px;border-radius:18px;background:#fff7e5;border:1px solid #f2e1bc;line-height:1.65}.challenge b{display:block;margin-bottom:4px}.en-challenge{color:var(--muted);font-size:14px;margin-top:5px}.placeholder{color:var(--muted);line-height:1.8;padding:12px 2px}
 .controls{display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid var(--line);margin-top:16px;padding-top:14px}.switch{display:flex;align-items:center;gap:8px;font-size:14px}.switch input{width:20px;height:20px}.stats{font-size:14px;color:var(--muted);text-align:right}.streak-badge{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#fff1d8,#ffe5ef);color:#7a4d28;border:1px solid #f3d7a1;border-radius:999px;padding:8px 12px;font-size:13px;font-weight:700;margin:12px 0 0}.growth-box,.parent-box{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}.growth-header,.parent-header{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}.growth-header h3,.parent-header h3{margin:0;font-size:17px}.map-count{font-size:13px;color:var(--muted)}.growth-map{display:grid;grid-template-columns:repeat(8,1fr);gap:7px;margin-top:10px}.growth-item{display:flex;align-items:center;justify-content:center;width:100%;aspect-ratio:1;border-radius:10px;background:#f5ecf5;border:1px solid var(--line);color:#d9cfe1;font-size:18px;transition:transform .15s ease, background .15s ease, color .15s ease}.growth-item.active{background:linear-gradient(135deg,#f8d186,#f6a9c9);border-color:#f1c487;color:#6d4f21;box-shadow:0 6px 14px rgba(246,169,201,.28)}.growth-item:active{transform:scale(.96)}.observation-list{list-style:none;padding:0;margin:10px 0 0;display:grid;gap:8px}.observation-list li{display:flex;justify-content:space-between;gap:8px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 10px;font-size:13px}.observation-pill{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:5px 8px;font-size:12px;background:#f3ebf8;color:#5e4d73;font-weight:700}.observation-pill.done{background:#eaf7ee;color:#2f6c4a}.observation-pill.pending{background:#f7f2fa;color:#786e82}.observation-meta{color:var(--muted);font-size:12px}.reflection{margin-top:15px}.reflection label{display:block;font-weight:800;margin-bottom:7px}.reflection textarea{width:100%;min-height:86px;resize:vertical;border:1px solid var(--line);background:#fff;border-radius:14px;padding:12px;font:inherit;line-height:1.5;outline:none}.reflection textarea:focus{border-color:#bea4d3;box-shadow:0 0 0 3px rgba(142,104,182,.12)}
 .history{margin-top:16px;border-top:1px solid var(--line);padding-top:14px}.history h3{margin:0 0 9px}.history-list{display:grid;gap:8px}.history-item{display:grid;grid-template-columns:86px 1fr auto;gap:8px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:12px;padding:9px 10px;font-size:13px}.history-item .date{color:var(--muted)}.check{font-size:18px}.empty{color:var(--muted);font-size:14px}
-.settings{margin-top:18px}.settings summary{cursor:pointer;color:var(--muted);font-size:14px}.settings .box{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.tiny{padding:9px 11px;font-size:13px;border-radius:12px}
+.settings{margin-top:18px}.settings summary{cursor:pointer;color:var(--muted);font-size:14px}.settings .box{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.tiny{padding:9px 11px;font-size:13px;border-radius:12px}.sync-fields{display:grid;gap:8px;margin-top:10px}.sync-fields label{font-size:13px;color:var(--muted)}.sync-fields input{width:100%;padding:10px 11px;border-radius:10px;border:1px solid var(--line);font:inherit;background:#fff}.sync-status{margin-top:8px;font-size:12px;color:var(--muted)}.sync-status.error{color:#b14a5d}
 .footer{text-align:center;color:#857c89;font-size:12px;line-height:1.6;margin-top:18px}.spark{position:fixed;z-index:50;pointer-events:none;font-size:24px;animation:pop 1s ease-out forwards}@keyframes pop{0%{transform:translate(0,0) scale(.2);opacity:0}15%{opacity:1}100%{transform:translate(var(--dx),var(--dy)) rotate(220deg) scale(1);opacity:0}}
 @media(max-width:780px){.main{grid-template-columns:1fr}.panel{border-radius:22px}.wrap{padding-left:12px;padding-right:12px}.info{order:2}.history-item{grid-template-columns:78px 1fr auto}.top p{font-size:14px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}.card-shell,.sun,.spark{animation:none!important;transition:none!important}}
@@ -78,7 +78,7 @@ body{padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
         <ul id="parentObservationList" class="observation-list"></ul>
       </div>
       <div class="history"><h3>最近的抽卡紀錄</h3><div id="historyList" class="history-list"><div class="empty">還沒有紀錄。</div></div></div>
-      <details class="settings"><summary>家長設定</summary><div class="box"><button id="redrawBtn" class="btn secondary tiny">今天重新抽一張</button><button id="resetBtn" class="btn secondary tiny">清除所有紀錄</button></div></details>
+      <details class="settings"><summary>家長設定</summary><div class="box"><button id="redrawBtn" class="btn secondary tiny">今天重新抽一張</button><button id="resetBtn" class="btn secondary tiny">清除所有紀錄</button></div><div class="sync-fields"><label for="sheetUrl">Google Apps Script 網址（Web App URL）</label><input id="sheetUrl" type="url" placeholder="https://script.google.com/macros/s/.../exec" /><label for="familyKey">家庭代碼（同一組裝置請填一樣）</label><input id="familyKey" type="text" maxlength="60" placeholder="例如 huang-family" /></div><div class="box"><button id="syncNowBtn" class="btn secondary tiny">雲端同步</button><button id="syncHelpBtn" class="btn secondary tiny">查看 Google Sheet 設定</button></div><div id="syncStatus" class="sync-status">尚未設定雲端同步</div></details>
     </aside>
   </main>
   <div class="footer">卡牌圖像與英文內容取自使用者提供的 <i>Positive Affirmation Cards for Kids with Daily Challenges</i>。Source artwork: FeelingsHelpBox.com / © Edita Stiborova (2025).</div>
@@ -88,12 +88,13 @@ const CARDS = [{"id":1,"en":"I AM KIND","challenge":"Do something nice for someo
 const KEY='positiveCardDaily_v1';
 let state=loadState();
 let current=null;
+let syncTimer=null;
 const el=id=>document.getElementById(id);
 const DOMAIN_SEQUENCE=['自我肯定','韌性／growth mindset','情緒調節','人際與同理','責任感','好奇與探索','問題解決'];
 const DOMAIN_BY_CARD=Array.from({length:CARDS.length},(_,index)=>DOMAIN_SEQUENCE[index % DOMAIN_SEQUENCE.length]);
 function dateKey(d=new Date()){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
-function loadState(){try{const s=JSON.parse(localStorage.getItem(KEY)); if(s&&Array.isArray(s.deck)) return Object.assign({deck:[],pos:0,history:{},completed:{},notes:{},drawers:{},showZh:true},s)}catch(e){} return {deck:[],pos:0,history:{},completed:{},notes:{},drawers:{},showZh:true}}
-function save(){localStorage.setItem(KEY,JSON.stringify(state))}
+function loadState(){try{const s=JSON.parse(localStorage.getItem(KEY)); if(s&&Array.isArray(s.deck)) return Object.assign({deck:[],pos:0,history:{},completed:{},notes:{},drawers:{},sync:{scriptUrl:'',familyKey:''},updatedAt:0,showZh:true},s)}catch(e){} return {deck:[],pos:0,history:{},completed:{},notes:{},drawers:{},sync:{scriptUrl:'',familyKey:''},updatedAt:0,showZh:true}}
+function save(touchUpdatedAt=true){if(touchUpdatedAt){state.updatedAt=Date.now()}localStorage.setItem(KEY,JSON.stringify(state));if(touchUpdatedAt)scheduleCloudPush()}
 function randInt(max){const a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]%max}
 function shuffled(lastId=null){const a=[...Array(CARDS.length).keys()];for(let i=a.length-1;i>0;i--){const j=randInt(i+1);[a[i],a[j]]=[a[j],a[i]]}if(lastId!==null && a[0]===lastId && a.length>1){[a[0],a[1]]=[a[1],a[0]]}return a}
 function ensureDeck(){if(!state.deck.length||state.pos>=state.deck.length){let last=null;const hs=Object.keys(state.history).sort();if(hs.length)last=state.history[hs[hs.length-1]];state.deck=shuffled(last);state.pos=0;save()}}
@@ -152,6 +153,64 @@ function renderParentObservation(){
   }).join('');
   list.innerHTML=html;
 }
+function setSyncStatus(message,isError=false){const box=el('syncStatus');if(!box)return;box.textContent=message;box.classList.toggle('error',isError)}
+function getSyncConfig(){const cfg=state.sync||{};return {scriptUrl:(cfg.scriptUrl||'').trim(),familyKey:(cfg.familyKey||'').trim()}}
+function normalizeRemoteState(raw){if(!raw||typeof raw!=='object')return null;const base={deck:[],pos:0,history:{},completed:{},notes:{},drawers:{},showZh:true,updatedAt:0};const merged=Object.assign(base,raw);if(!Array.isArray(merged.deck))merged.deck=[];if(typeof merged.pos!=='number')merged.pos=0;if(!merged.history||typeof merged.history!=='object')merged.history={};if(!merged.completed||typeof merged.completed!=='object')merged.completed={};if(!merged.notes||typeof merged.notes!=='object')merged.notes={};if(!merged.drawers||typeof merged.drawers!=='object')merged.drawers={};merged.updatedAt=Number(merged.updatedAt||0);return merged}
+function exportStateForCloud(){return {deck:state.deck,pos:state.pos,history:state.history,completed:state.completed,notes:state.notes,drawers:state.drawers,showZh:state.showZh,updatedAt:state.updatedAt}}
+function renderFromState(){const existing=todayIndex();if(existing!==null){showCard(existing,false);return}current=null;el('cardShell').classList.remove('revealed');el('drawBtn').disabled=false;el('drawBtn').textContent='✨ 抽取今天的卡';el('completeBtn').disabled=true;el('completeBtn').textContent='✓ 我完成今日挑戰了';el('infoContent').hidden=true;el('infoPlaceholder').hidden=false;el('drawerSelect').disabled=false;if(state.drawers[dateKey()])el('drawerSelect').value=state.drawers[dateKey()];else el('drawerSelect').value='';applyZh();updateStats()}
+function mergeRemoteState(remote){const normalized=normalizeRemoteState(remote);if(!normalized)return false;const localUpdatedAt=Number(state.updatedAt||0);if(normalized.updatedAt<=localUpdatedAt)return false;const keepSync=state.sync||{scriptUrl:'',familyKey:''};state=Object.assign({},state,normalized,{sync:keepSync});save(false);return true}
+async function pullFromCloud(silent=false){const cfg=getSyncConfig();if(!cfg.scriptUrl||!cfg.familyKey){if(!silent)setSyncStatus('請先設定 Google Apps Script 網址與家庭代碼',true);return false}const loadUrl=new URL(cfg.scriptUrl);loadUrl.searchParams.set('action','load');loadUrl.searchParams.set('familyKey',cfg.familyKey);const res=await fetch(loadUrl.toString(),{method:'GET'});if(!res.ok)throw new Error('無法讀取雲端資料');const data=await res.json();const remote=data&&data.state?data.state:null;const changed=mergeRemoteState(remote);if(changed)renderFromState();if(!silent)setSyncStatus(changed?'已從雲端更新到最新':'雲端資料已是最新');return changed}
+async function pushToCloud(silent=false){const cfg=getSyncConfig();if(!cfg.scriptUrl||!cfg.familyKey){if(!silent)setSyncStatus('請先設定 Google Apps Script 網址與家庭代碼',true);return false}const payload={action:'save',familyKey:cfg.familyKey,state:exportStateForCloud()};const res=await fetch(cfg.scriptUrl,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});if(!res.ok)throw new Error('無法寫入雲端資料');const data=await res.json();if(data&&data.updatedAt&&Number(data.updatedAt)>Number(state.updatedAt||0)){state.updatedAt=Number(data.updatedAt);save(false)}if(!silent)setSyncStatus('已成功同步到雲端');return true}
+async function syncNow(){try{setSyncStatus('同步中...');await pullFromCloud(true);await pushToCloud(true);setSyncStatus('同步完成，跨裝置可見')}catch(err){setSyncStatus(`同步失敗：${err.message}`,true)}}
+function scheduleCloudPush(){const cfg=getSyncConfig();if(!cfg.scriptUrl||!cfg.familyKey)return;if(syncTimer)clearTimeout(syncTimer);syncTimer=setTimeout(()=>{pushToCloud(true).then(()=>setSyncStatus('已自動同步到雲端')).catch(err=>setSyncStatus(`自動同步失敗：${err.message}`,true))},900)}
+function scriptTemplate(){return `function doGet(e) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('sync') || SpreadsheetApp.getActiveSpreadsheet().insertSheet('sync');
+  if (sheet.getLastRow() === 0) sheet.appendRow(['familyKey','stateJson','updatedAt']);
+  const action = (e.parameter.action || '').trim();
+  const familyKey = (e.parameter.familyKey || '').trim();
+  if (action === 'load') {
+    const row = findRow_(sheet, familyKey);
+    const stateJson = row > 0 ? String(sheet.getRange(row, 2).getValue() || '{}') : '{}';
+    return json_({ ok: true, state: JSON.parse(stateJson) });
+  }
+  return json_({ ok: false, message: 'Unsupported action' });
+}
+
+function doPost(e) {
+  const body = JSON.parse(e.postData.contents || '{}');
+  const action = (body.action || '').trim();
+  const familyKey = (body.familyKey || '').trim();
+  const state = body.state || {};
+  if (action !== 'save' || !familyKey) return json_({ ok: false, message: 'Invalid payload' });
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('sync') || SpreadsheetApp.getActiveSpreadsheet().insertSheet('sync');
+  if (sheet.getLastRow() === 0) sheet.appendRow(['familyKey','stateJson','updatedAt']);
+  const row = findRow_(sheet, familyKey);
+  const updatedAt = Date.now();
+  state.updatedAt = updatedAt;
+  if (row > 0) {
+    sheet.getRange(row, 2).setValue(JSON.stringify(state));
+    sheet.getRange(row, 3).setValue(updatedAt);
+  } else {
+    sheet.appendRow([familyKey, JSON.stringify(state), updatedAt]);
+  }
+  return json_({ ok: true, updatedAt: updatedAt });
+}
+
+function findRow_(sheet, familyKey) {
+  const values = sheet.getDataRange().getValues();
+  for (let i = 1; i < values.length; i++) {
+    if (String(values[i][0]).trim() === familyKey) return i + 1;
+  }
+  return -1;
+}
+
+function json_(obj) {
+  return ContentService
+    .createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}`}
+function showSyncHelp(){alert('請建立一個 Google Sheet，開啟 Apps Script，貼上範本程式並部署成 Web App（Anyone 可存取）。接著把 Web App URL 貼到本頁「Google Apps Script 網址」。');console.log(scriptTemplate())}
+function autoSyncOnLoad(){const cfg=getSyncConfig();if(!cfg.scriptUrl||!cfg.familyKey){setSyncStatus('尚未設定雲端同步');return}syncNow()}
 function drawToday(){const dk=dateKey();let idx=state.history[dk];if(idx===undefined){const drawer=el('drawerSelect').value;if(!drawer){alert('請先選擇翻卡人！');return}ensureDeck();idx=state.deck[state.pos++];state.history[dk]=idx;state.drawers[dk]=drawer;save();burst()}showCard(idx,true)}
 function showCard(idx,animate=false){current=idx;const c=CARDS[idx];el('cardImage').src='data:image/jpeg;base64,'+c.img;el('enTitle').textContent=c.en;el('zhTitle').textContent=c.zh;el('enChallenge').textContent=c.challenge;el('zhChallenge').textContent=c.zhChallenge;el('infoPlaceholder').hidden=true;el('infoContent').hidden=false;el('reflection').value=state.notes[dateKey()]||'';const _dk=dateKey();if(state.drawers[_dk])el('drawerSelect').value=state.drawers[_dk];el('drawerSelect').disabled=true;el('cardShell').classList.add('revealed');el('drawBtn').textContent='🌟 今天的卡已抽出';el('drawBtn').disabled=true;syncComplete();applyZh();updateStats();if(animate)setTimeout(()=>el('infoContent').scrollIntoView({behavior:'smooth',block:'nearest'}),500)}
 function syncComplete(){const done=!!state.completed[dateKey()];el('completeBtn').disabled=current===null;el('completeBtn').textContent=done?'🎉 今日挑戰已完成':'✓ 我完成今日挑戰了';el('completeBtn').classList.toggle('primary',done)}
@@ -175,6 +234,13 @@ function burst(){const symbols=['✨','⭐','🌈','💛','🌸'];for(let i=0;i<
 function redrawToday(){const dk=dateKey();if(state.history[dk]===undefined){drawToday();return}if(!confirm('確定要放回今天的結果並重新抽一張嗎？原本那張在本輪仍視為已抽過。'))return;delete state.history[dk];delete state.completed[dk];delete state.notes[dk];delete state.drawers[dk];current=null;save();el('cardShell').classList.remove('revealed');el('drawBtn').disabled=false;el('drawBtn').textContent='✨ 抽取今天的卡';el('completeBtn').disabled=true;el('infoContent').hidden=true;el('infoPlaceholder').hidden=false;el('drawerSelect').disabled=false;setTimeout(drawToday,250)}
 function resetAll(){if(!confirm('這會清除所有抽卡、完成與筆記紀錄。確定嗎？'))return;if(!confirm('最後確認：真的要全部清除嗎？'))return;localStorage.removeItem(KEY);state=loadState();location.reload()}
 el('drawBtn').addEventListener('click',drawToday);el('cardShell').addEventListener('click',()=>{if(todayIndex()===null)drawToday()});el('cardShell').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&todayIndex()===null){e.preventDefault();drawToday()}});el('completeBtn').addEventListener('click',completeToday);el('zhToggle').addEventListener('change',e=>{state.showZh=e.target.checked;save();applyZh();renderHistory()});el('reflection').addEventListener('input',e=>{if(current===null)return;state.notes[dateKey()]=e.target.value;save()});el('redrawBtn').addEventListener('click',redrawToday);el('resetBtn').addEventListener('click',resetAll);
-const existing=todayIndex();if(existing!==null)showCard(existing,false);else{applyZh();updateStats()}
+el('sheetUrl').addEventListener('change',e=>{state.sync.scriptUrl=(e.target.value||'').trim();save(false);setSyncStatus('已儲存雲端網址，請按「雲端同步」')});
+el('familyKey').addEventListener('change',e=>{state.sync.familyKey=(e.target.value||'').trim();save(false);setSyncStatus('已儲存家庭代碼，請按「雲端同步」')});
+el('syncNowBtn').addEventListener('click',syncNow);
+el('syncHelpBtn').addEventListener('click',showSyncHelp);
+el('sheetUrl').value=(state.sync&&state.sync.scriptUrl)||'';
+el('familyKey').value=(state.sync&&state.sync.familyKey)||'';
+renderFromState();
+autoSyncOnLoad();
 </script>
 </body></html>
