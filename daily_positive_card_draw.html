@@ -16,8 +16,9 @@ body{padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
 .back{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:linear-gradient(155deg,#f7c6dc,#fff2b7 46%,#cfeefa);padding:30px}.back .sun{font-size:76px;filter:drop-shadow(0 8px 10px rgba(0,0,0,.08));animation:float 3s ease-in-out infinite}.back h2{font-size:clamp(26px,5vw,40px);margin:16px 0 6px}.back p{margin:0;color:#665a6b;line-height:1.6}.front{transform:rotateY(180deg);background:#fff}.front img{width:100%;height:100%;display:block;object-fit:cover}
 @keyframes float{50%{transform:translateY(-7px) rotate(3deg)}}
 .draw-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px}.btn{appearance:none;border:0;border-radius:16px;padding:13px 18px;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 8px 20px rgba(75,54,89,.12);transition:.18s transform,.18s opacity}.btn:active{transform:scale(.97)}.primary{background:linear-gradient(135deg,#8c6bb5,#c67aa5);color:white}.secondary{background:#fff;color:var(--ink);border:1px solid var(--line)}.complete{background:#eaf7ee;color:#2f6c4a;border:1px solid #cde8d6}.btn[disabled]{opacity:.45;cursor:default}
+.drawer-row{display:flex;align-items:center;gap:8px;justify-content:center;margin-bottom:10px;font-size:15px;font-weight:700}.drawer-select{padding:10px 16px;border-radius:14px;border:1px solid var(--line);font:inherit;font-size:15px;background:#fff;color:var(--ink);cursor:pointer;outline:none;min-width:110px}.drawer-select:focus{border-color:#bea4d3;box-shadow:0 0 0 3px rgba(142,104,182,.12)}.drawer-select:disabled{opacity:.6;cursor:default}
 .info h2{margin:0 0 4px;font-size:25px}.en{font-size:18px;font-weight:800;letter-spacing:.02em;color:#5f4877;margin:7px 0 0}.challenge{margin:16px 0 0;padding:14px 15px;border-radius:18px;background:#fff7e5;border:1px solid #f2e1bc;line-height:1.65}.challenge b{display:block;margin-bottom:4px}.en-challenge{color:var(--muted);font-size:14px;margin-top:5px}.placeholder{color:var(--muted);line-height:1.8;padding:12px 2px}
-.controls{display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid var(--line);margin-top:16px;padding-top:14px}.switch{display:flex;align-items:center;gap:8px;font-size:14px}.switch input{width:20px;height:20px}.stats{font-size:14px;color:var(--muted);text-align:right}.reflection{margin-top:15px}.reflection label{display:block;font-weight:800;margin-bottom:7px}.reflection textarea{width:100%;min-height:86px;resize:vertical;border:1px solid var(--line);background:#fff;border-radius:14px;padding:12px;font:inherit;line-height:1.5;outline:none}.reflection textarea:focus{border-color:#bea4d3;box-shadow:0 0 0 3px rgba(142,104,182,.12)}
+.controls{display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid var(--line);margin-top:16px;padding-top:14px}.switch{display:flex;align-items:center;gap:8px;font-size:14px}.switch input{width:20px;height:20px}.stats{font-size:14px;color:var(--muted);text-align:right}.streak-badge{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#fff1d8,#ffe5ef);color:#7a4d28;border:1px solid #f3d7a1;border-radius:999px;padding:8px 12px;font-size:13px;font-weight:700;margin:12px 0 0}.growth-box,.parent-box{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}.growth-header,.parent-header{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}.growth-header h3,.parent-header h3{margin:0;font-size:17px}.map-count{font-size:13px;color:var(--muted)}.growth-map{display:grid;grid-template-columns:repeat(8,1fr);gap:7px;margin-top:10px}.growth-item{display:flex;align-items:center;justify-content:center;width:100%;aspect-ratio:1;border-radius:10px;background:#f5ecf5;border:1px solid var(--line);color:#d9cfe1;font-size:18px;transition:transform .15s ease, background .15s ease, color .15s ease}.growth-item.active{background:linear-gradient(135deg,#f8d186,#f6a9c9);border-color:#f1c487;color:#6d4f21;box-shadow:0 6px 14px rgba(246,169,201,.28)}.growth-item:active{transform:scale(.96)}.observation-list{list-style:none;padding:0;margin:10px 0 0;display:grid;gap:8px}.observation-list li{display:flex;justify-content:space-between;gap:8px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 10px;font-size:13px}.observation-pill{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:5px 8px;font-size:12px;background:#f3ebf8;color:#5e4d73;font-weight:700}.observation-pill.done{background:#eaf7ee;color:#2f6c4a}.observation-pill.pending{background:#f7f2fa;color:#786e82}.observation-meta{color:var(--muted);font-size:12px}.reflection{margin-top:15px}.reflection label{display:block;font-weight:800;margin-bottom:7px}.reflection textarea{width:100%;min-height:86px;resize:vertical;border:1px solid var(--line);background:#fff;border-radius:14px;padding:12px;font:inherit;line-height:1.5;outline:none}.reflection textarea:focus{border-color:#bea4d3;box-shadow:0 0 0 3px rgba(142,104,182,.12)}
 .history{margin-top:16px;border-top:1px solid var(--line);padding-top:14px}.history h3{margin:0 0 9px}.history-list{display:grid;gap:8px}.history-item{display:grid;grid-template-columns:86px 1fr auto;gap:8px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:12px;padding:9px 10px;font-size:13px}.history-item .date{color:var(--muted)}.check{font-size:18px}.empty{color:var(--muted);font-size:14px}
 .settings{margin-top:18px}.settings summary{cursor:pointer;color:var(--muted);font-size:14px}.settings .box{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.tiny{padding:9px 11px;font-size:13px;border-radius:12px}
 .footer{text-align:center;color:#857c89;font-size:12px;line-height:1.6;margin-top:18px}.spark{position:fixed;z-index:50;pointer-events:none;font-size:24px;animation:pop 1s ease-out forwards}@keyframes pop{0%{transform:translate(0,0) scale(.2);opacity:0}15%{opacity:1}100%{transform:translate(var(--dx),var(--dy)) rotate(220deg) scale(1);opacity:0}}
@@ -41,6 +42,14 @@ body{padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
           <div class="face front"><img id="cardImage" alt="今日正向肯定卡" /></div>
         </div>
       </div>
+      <div class="drawer-row">
+        <label for="drawerSelect">翻卡人：</label>
+        <select id="drawerSelect" class="drawer-select">
+          <option value="">請選擇…</option>
+          <option value="若妍">若妍</option>
+          <option value="宇樘">宇樘</option>
+        </select>
+      </div>
       <div class="draw-row">
         <button id="drawBtn" class="btn primary">✨ 抽取今天的卡</button>
         <button id="completeBtn" class="btn complete" disabled>✓ 我完成今日挑戰了</button>
@@ -59,6 +68,15 @@ body{padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
         <label class="switch"><input type="checkbox" id="zhToggle" checked> 顯示中文提示</label>
         <div class="stats"><div id="deckStat">尚未開始</div><div id="doneStat">完成 0 天</div></div>
       </div>
+      <div id="streakStat" class="streak-badge">🌱 今天是正向習慣的開始</div>
+      <div class="growth-box">
+        <div class="growth-header"><h3>40 張成長地圖</h3><span id="growthMapCount" class="map-count">已探索 0 / 40 種正向力量</span></div>
+        <div id="growthMap" class="growth-map" aria-label="40張成長地圖"></div>
+      </div>
+      <div class="parent-box">
+        <div class="parent-header"><h3>家長觀察頁</h3></div>
+        <ul id="parentObservationList" class="observation-list"></ul>
+      </div>
       <div class="history"><h3>最近的抽卡紀錄</h3><div id="historyList" class="history-list"><div class="empty">還沒有紀錄。</div></div></div>
       <details class="settings"><summary>家長設定</summary><div class="box"><button id="redrawBtn" class="btn secondary tiny">今天重新抽一張</button><button id="resetBtn" class="btn secondary tiny">清除所有紀錄</button></div></details>
     </aside>
@@ -71,22 +89,90 @@ const KEY='positiveCardDaily_v1';
 let state=loadState();
 let current=null;
 const el=id=>document.getElementById(id);
+const DOMAIN_SEQUENCE=['自我肯定','韌性／growth mindset','情緒調節','人際與同理','責任感','好奇與探索','問題解決'];
+const DOMAIN_BY_CARD=Array.from({length:CARDS.length},(_,index)=>DOMAIN_SEQUENCE[index % DOMAIN_SEQUENCE.length]);
 function dateKey(d=new Date()){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
-function loadState(){try{const s=JSON.parse(localStorage.getItem(KEY)); if(s&&Array.isArray(s.deck)) return Object.assign({deck:[],pos:0,history:{},completed:{},notes:{},showZh:true},s)}catch(e){} return {deck:[],pos:0,history:{},completed:{},notes:{},showZh:true}}
+function loadState(){try{const s=JSON.parse(localStorage.getItem(KEY)); if(s&&Array.isArray(s.deck)) return Object.assign({deck:[],pos:0,history:{},completed:{},notes:{},drawers:{},showZh:true},s)}catch(e){} return {deck:[],pos:0,history:{},completed:{},notes:{},drawers:{},showZh:true}}
 function save(){localStorage.setItem(KEY,JSON.stringify(state))}
 function randInt(max){const a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]%max}
 function shuffled(lastId=null){const a=[...Array(CARDS.length).keys()];for(let i=a.length-1;i>0;i--){const j=randInt(i+1);[a[i],a[j]]=[a[j],a[i]]}if(lastId!==null && a[0]===lastId && a.length>1){[a[0],a[1]]=[a[1],a[0]]}return a}
 function ensureDeck(){if(!state.deck.length||state.pos>=state.deck.length){let last=null;const hs=Object.keys(state.history).sort();if(hs.length)last=state.history[hs[hs.length-1]];state.deck=shuffled(last);state.pos=0;save()}}
 function todayIndex(){return state.history[dateKey()] ?? null}
-function drawToday(){const dk=dateKey();let idx=state.history[dk];if(idx===undefined){ensureDeck();idx=state.deck[state.pos++];state.history[dk]=idx;save();burst()}showCard(idx,true)}
-function showCard(idx,animate=false){current=idx;const c=CARDS[idx];el('cardImage').src='data:image/jpeg;base64,'+c.img;el('enTitle').textContent=c.en;el('zhTitle').textContent=c.zh;el('enChallenge').textContent=c.challenge;el('zhChallenge').textContent=c.zhChallenge;el('infoPlaceholder').hidden=true;el('infoContent').hidden=false;el('reflection').value=state.notes[dateKey()]||'';el('cardShell').classList.add('revealed');el('drawBtn').textContent='🌟 今天的卡已抽出';el('drawBtn').disabled=true;syncComplete();applyZh();updateStats();if(animate)setTimeout(()=>el('infoContent').scrollIntoView({behavior:'smooth',block:'nearest'}),500)}
+function currentStreak(){
+  const seenDates=Object.keys(state.completed).filter(key=>state.completed[key]).sort();
+  if(!seenDates.length)return 0;
+  let streak=0;
+  let cursor=new Date();
+  while(true){
+    const key=dateKey(cursor);
+    if(state.completed[key]){streak++;cursor.setDate(cursor.getDate()-1);continue}
+    break;
+  }
+  return streak;
+}
+function getExploredCards(){
+  return [...new Set(Object.values(state.history).map(v=>Number(v)))];
+}
+function getCardDomain(cardIndex){
+  return DOMAIN_BY_CARD[Number(cardIndex)] || '自我肯定';
+}
+function renderGrowthMap(){
+  const map=el('growthMap');
+  const explored=new Set(getExploredCards());
+  map.innerHTML='';
+  for(let i=0;i<CARDS.length;i++){
+    const item=document.createElement('div');
+    item.className='growth-item' + (explored.has(i) ? ' active' : '');
+    item.title=`卡片 ${i+1}`;
+    item.textContent=explored.has(i) ? '✦' : '·';
+    map.appendChild(item);
+  }
+}
+function renderParentObservation(){
+  const list=el('parentObservationList');
+  const domainDates=new Map();
+  const sortedDates=Object.keys(state.history).sort().reverse();
+  for(const date of sortedDates){
+    const idx=Number(state.history[date]);
+    const domain=getCardDomain(idx);
+    if(!domainDates.has(domain) || new Date(date) > new Date(domainDates.get(domain).date)){
+      domainDates.set(domain,{date});
+    }
+  }
+  const domains=DOMAIN_SEQUENCE.map(name=>({name, last:domainDates.get(name)?.date || null}));
+  const recent=domains.filter(d=>d.last).sort((a,b)=>new Date(b.last)-new Date(a.last)).slice(0,4);
+  if(!recent.length){
+    list.innerHTML='<li><span>尚未有觀察資料</span><span class="observation-pill pending">待開始</span></li>';
+    return;
+  }
+  const html=domains.map(d=>{
+    const isDone=!!d.last;
+    const label=isDone?`最近 ${d.last.slice(5).replace('-','/')}`:'待開始';
+    return `<li><span>${d.name}</span><span class="observation-pill ${isDone?'done':'pending'}">${isDone?'已完成':'待開始'}</span></li>`;
+  }).join('');
+  list.innerHTML=html;
+}
+function drawToday(){const dk=dateKey();let idx=state.history[dk];if(idx===undefined){const drawer=el('drawerSelect').value;if(!drawer){alert('請先選擇翻卡人！');return}ensureDeck();idx=state.deck[state.pos++];state.history[dk]=idx;state.drawers[dk]=drawer;save();burst()}showCard(idx,true)}
+function showCard(idx,animate=false){current=idx;const c=CARDS[idx];el('cardImage').src='data:image/jpeg;base64,'+c.img;el('enTitle').textContent=c.en;el('zhTitle').textContent=c.zh;el('enChallenge').textContent=c.challenge;el('zhChallenge').textContent=c.zhChallenge;el('infoPlaceholder').hidden=true;el('infoContent').hidden=false;el('reflection').value=state.notes[dateKey()]||'';const _dk=dateKey();if(state.drawers[_dk])el('drawerSelect').value=state.drawers[_dk];el('drawerSelect').disabled=true;el('cardShell').classList.add('revealed');el('drawBtn').textContent='🌟 今天的卡已抽出';el('drawBtn').disabled=true;syncComplete();applyZh();updateStats();if(animate)setTimeout(()=>el('infoContent').scrollIntoView({behavior:'smooth',block:'nearest'}),500)}
 function syncComplete(){const done=!!state.completed[dateKey()];el('completeBtn').disabled=current===null;el('completeBtn').textContent=done?'🎉 今日挑戰已完成':'✓ 我完成今日挑戰了';el('completeBtn').classList.toggle('primary',done)}
 function applyZh(){const show=state.showZh!==false;el('zhTitle').style.display=show?'block':'none';el('zhChallenge').style.display=show?'inline':'none';el('zhToggle').checked=show}
-function updateStats(){const remaining=Math.max(0,CARDS.length-state.pos);const done=Object.values(state.completed).filter(Boolean).length;el('deckStat').textContent=`本輪剩 ${remaining} 張未抽`;el('doneStat').textContent=`已完成 ${done} 天`;renderHistory()}
-function renderHistory(){const box=el('historyList');const dates=Object.keys(state.history).sort().reverse().slice(0,7);if(!dates.length){box.innerHTML='<div class="empty">還沒有紀錄。</div>';return}box.innerHTML='';for(const d of dates){const c=CARDS[state.history[d]];const item=document.createElement('div');item.className='history-item';item.innerHTML=`<span class="date">${d.slice(5).replace('-','/')}</span><span>${state.showZh!==false?c.zh:c.en}</span><span class="check">${state.completed[d]?'✅':'○'}</span>`;box.appendChild(item)}}
+function updateStats(){
+  const remaining=Math.max(0,CARDS.length-state.pos);
+  const done=Object.values(state.completed).filter(Boolean).length;
+  const explored=getExploredCards().length;
+  const streak=currentStreak();
+  el('deckStat').textContent=`本輪剩 ${remaining} 張未抽`;
+  el('doneStat').textContent=`已完成 ${done} 天`;
+  el('streakStat').textContent = streak > 0 ? `🔥 已連續完成 ${streak} 天` : '🌱 今天是正向習慣的開始';
+  el('growthMapCount').textContent=`已探索 ${explored} / ${CARDS.length} 種正向力量`;
+  renderGrowthMap();
+  renderParentObservation();
+  renderHistory();
+}
+function renderHistory(){const box=el('historyList');const dates=Object.keys(state.history).sort().reverse().slice(0,7);if(!dates.length){box.innerHTML='<div class="empty">還沒有紀錄。</div>';return}box.innerHTML='';for(const d of dates){const c=CARDS[state.history[d]];const item=document.createElement('div');item.className='history-item';const drawerName=state.drawers&&state.drawers[d]?` ${state.drawers[d]}`:'';item.innerHTML=`<span class="date">${d.slice(5).replace('-','/')}${drawerName}</span><span>${state.showZh!==false?c.zh:c.en}</span><span class="check">${state.completed[d]?'✅':'○'}</span>`;box.appendChild(item)}}
 function completeToday(){if(current===null)return;const dk=dateKey();state.completed[dk]=!state.completed[dk];save();syncComplete();updateStats();if(state.completed[dk])burst()}
 function burst(){const symbols=['✨','⭐','🌈','💛','🌸'];for(let i=0;i<18;i++){const s=document.createElement('span');s.className='spark';s.textContent=symbols[i%symbols.length];s.style.left=(45+Math.random()*10)+'vw';s.style.top=(40+Math.random()*12)+'vh';s.style.setProperty('--dx',(Math.random()*420-210)+'px');s.style.setProperty('--dy',(Math.random()*360-220)+'px');document.body.appendChild(s);setTimeout(()=>s.remove(),1100)}}
-function redrawToday(){const dk=dateKey();if(state.history[dk]===undefined){drawToday();return}if(!confirm('確定要放回今天的結果並重新抽一張嗎？原本那張在本輪仍視為已抽過。'))return;delete state.history[dk];delete state.completed[dk];delete state.notes[dk];current=null;save();el('cardShell').classList.remove('revealed');el('drawBtn').disabled=false;el('drawBtn').textContent='✨ 抽取今天的卡';el('completeBtn').disabled=true;el('infoContent').hidden=true;el('infoPlaceholder').hidden=false;setTimeout(drawToday,250)}
+function redrawToday(){const dk=dateKey();if(state.history[dk]===undefined){drawToday();return}if(!confirm('確定要放回今天的結果並重新抽一張嗎？原本那張在本輪仍視為已抽過。'))return;delete state.history[dk];delete state.completed[dk];delete state.notes[dk];delete state.drawers[dk];current=null;save();el('cardShell').classList.remove('revealed');el('drawBtn').disabled=false;el('drawBtn').textContent='✨ 抽取今天的卡';el('completeBtn').disabled=true;el('infoContent').hidden=true;el('infoPlaceholder').hidden=false;el('drawerSelect').disabled=false;setTimeout(drawToday,250)}
 function resetAll(){if(!confirm('這會清除所有抽卡、完成與筆記紀錄。確定嗎？'))return;if(!confirm('最後確認：真的要全部清除嗎？'))return;localStorage.removeItem(KEY);state=loadState();location.reload()}
 el('drawBtn').addEventListener('click',drawToday);el('cardShell').addEventListener('click',()=>{if(todayIndex()===null)drawToday()});el('cardShell').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&todayIndex()===null){e.preventDefault();drawToday()}});el('completeBtn').addEventListener('click',completeToday);el('zhToggle').addEventListener('change',e=>{state.showZh=e.target.checked;save();applyZh();renderHistory()});el('reflection').addEventListener('input',e=>{if(current===null)return;state.notes[dateKey()]=e.target.value;save()});el('redrawBtn').addEventListener('click',redrawToday);el('resetBtn').addEventListener('click',resetAll);
 const existing=todayIndex();if(existing!==null)showCard(existing,false);else{applyZh();updateStats()}
