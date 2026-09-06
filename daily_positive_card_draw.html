@@ -294,7 +294,14 @@ function showRewardOverlay(){
   }
   launchFireworks();
 }
-function hideRewardOverlay(){const overlay=el('rewardOverlay');if(overlay)overlay.hidden=true}
+function hideRewardOverlay(){
+  const overlay=el('rewardOverlay');
+  if(!overlay)return;
+  state.reward.celebratedAt=state.reward.celebratedAt||Date.now();
+  state.reward.emailTo=state.reward.emailTo||REWARD_EMAIL;
+  save(false);
+  overlay.hidden=true;
+}
 async function sendRewardNoticeEmail(){
   const cfg=getSyncConfig();
   const statusEl=el('rewardMailStatus');
@@ -355,12 +362,14 @@ function testRewardFlow(){
   sendRewardTestEmail().catch(err=>setSyncStatus(`測試寄信失敗：${err.message}`,true));
 }
 function maybeCelebrateReward(){
-  if(!isRewardUnlocked())return;
-  if(!state.reward.celebratedAt){
-    state.reward.celebratedAt=Date.now();
-    save();
-    showRewardOverlay();
+  if(state.reward.celebratedAt && state.reward.celebratedAt>0){
+    hideRewardOverlay();
+    return;
   }
+  if(!isRewardUnlocked())return;
+  state.reward.celebratedAt=Date.now();
+  save(false);
+  showRewardOverlay();
   if(!state.reward.emailSentAt){
     sendRewardNoticeEmail().catch(err=>setSyncStatus(`通知信寄送失敗：${err.message}`,true));
   }
