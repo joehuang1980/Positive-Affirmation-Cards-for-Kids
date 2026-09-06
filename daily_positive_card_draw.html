@@ -45,16 +45,6 @@ body{padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
         </div>
       </div>
       <div class="drawer-row">
-      <div id="rewardOverlay" class="reward-overlay" hidden>
-        <div class="reward-shell">
-          <div id="rewardFireworks" class="reward-fireworks" aria-hidden="true"></div>
-          <h2>🎆 太棒了！</h2>
-          <p>40 張正向小卡已全部完成！</p>
-          <div class="reward-accent">恭喜獲得兌換泡澡球資格</div>
-          <p id="rewardMailStatus">正在發送通知信...</p>
-          <div class="reward-actions"><button id="rewardCloseBtn" class="btn secondary">我知道了</button></div>
-        </div>
-      </div>
         <label for="drawerSelect">翻卡人：</label>
         <select id="drawerSelect" class="drawer-select">
           <option value="">請選擇…</option>
@@ -93,6 +83,16 @@ body{padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
       <details class="settings"><summary>家長設定</summary><div class="box"><button id="redrawBtn" class="btn secondary tiny">查看今天已抽卡片</button><button id="resetBtn" class="btn secondary tiny">清除所有紀錄</button></div><div class="sync-fields"><label for="sheetUrl">Google Apps Script 網址（Web App URL）</label><input id="sheetUrl" type="url" placeholder="https://script.google.com/macros/s/.../exec" /><label for="familyKey">家庭代碼（同一組裝置請填一樣）</label><input id="familyKey" type="text" maxlength="60" placeholder="例如 huang-family" /></div><div class="box"><button id="syncNowBtn" class="btn secondary tiny">雲端同步</button><button id="syncHelpBtn" class="btn secondary tiny">查看 Google Sheet 設定</button><button id="testRewardBtn" class="btn secondary tiny">測試 40 張獎勵流程</button></div><div id="syncStatus" class="sync-status">尚未設定雲端同步</div></details>
     </aside>
   </main>
+  <div id="rewardOverlay" class="reward-overlay" hidden>
+    <div class="reward-shell">
+      <div id="rewardFireworks" class="reward-fireworks" aria-hidden="true"></div>
+      <h2>🎆 太棒了！</h2>
+      <p>40 張正向小卡已全部完成！</p>
+      <div class="reward-accent">恭喜獲得兌換泡澡球資格</div>
+      <p id="rewardMailStatus">正在發送通知信...</p>
+      <div class="reward-actions"><button id="rewardCloseBtn" class="btn secondary">我知道了</button></div>
+    </div>
+  </div>
   <div class="footer">卡牌圖像與英文內容取自使用者提供的 <i>Positive Affirmation Cards for Kids with Daily Challenges</i>。Source artwork: FeelingsHelpBox.com / © Edita Stiborova (2025).</div>
 </div>
 <script>
