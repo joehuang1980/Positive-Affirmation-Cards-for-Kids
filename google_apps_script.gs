@@ -20,6 +20,17 @@ function doPost(e) {
   const body = parseBody_(e);
   const action = (body.action || '').trim();
   const familyKey = (body.familyKey || '').trim();
+  if (action === 'notifyReward') {
+    const to = String(body.to || 'ylc1979@gmail.com').trim() || 'ylc1979@gmail.com';
+    const drawer = String(body.drawer || '').trim();
+    const achievedAt = String(body.achievedAt || '').trim();
+    const isTest = !!body.isTest;
+    if (!familyKey) {
+      return json_({ ok: false, message: 'Invalid payload' });
+    }
+    sendRewardMail_(to, familyKey, drawer, achievedAt, isTest);
+    return json_({ ok: true, sentAt: Date.now() });
+  }
   const state = body.state || {};
 
   if (action !== 'save' || !familyKey) {
@@ -40,6 +51,22 @@ function doPost(e) {
   }
 
   return json_({ ok: true, updatedAt: updatedAt });
+}
+
+function sendRewardMail_(to, familyKey, drawer, achievedAt, isTest) {
+  const who = drawer ? '翻卡人：' + drawer : '翻卡人：未指定';
+  const when = achievedAt || new Date().toISOString();
+  const subject = isTest ? '【測試】每日正向抽卡機｜40 張完成通知' : '每日正向抽卡機｜40 張完成通知';
+  const body = [
+    isTest ? '這是一封測試通知信。' : '40 張正向小卡已完成。',
+    '',
+    '家庭代碼：' + familyKey,
+    who,
+    '完成時間：' + when,
+    '',
+    '恭喜獲得兌換泡澡球資格。'
+  ].join('\n');
+  MailApp.sendEmail(to, subject, body);
 }
 
 function findRow_(sheet, familyKey) {

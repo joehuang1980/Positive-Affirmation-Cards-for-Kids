@@ -22,16 +22,18 @@ body{padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
 .history{margin-top:16px;border-top:1px solid var(--line);padding-top:14px}.history h3{margin:0 0 9px}.history-list{display:grid;gap:8px}.history-item{display:grid;grid-template-columns:86px 1fr auto;gap:8px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:12px;padding:9px 10px;font-size:13px}.history-item .date{color:var(--muted)}.check{font-size:18px}.empty{color:var(--muted);font-size:14px}
 .settings{margin-top:18px}.settings summary{cursor:pointer;color:var(--muted);font-size:14px}.settings .box{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.tiny{padding:9px 11px;font-size:13px;border-radius:12px}.sync-fields{display:grid;gap:8px;margin-top:10px}.sync-fields label{font-size:13px;color:var(--muted)}.sync-fields input{width:100%;padding:10px 11px;border-radius:10px;border:1px solid var(--line);font:inherit;background:#fff}.sync-status{margin-top:8px;font-size:12px;color:var(--muted)}.sync-status.error{color:#b14a5d}
 .footer{text-align:center;color:#857c89;font-size:12px;line-height:1.6;margin-top:18px}.spark{position:fixed;z-index:50;pointer-events:none;font-size:24px;animation:pop 1s ease-out forwards}@keyframes pop{0%{transform:translate(0,0) scale(.2);opacity:0}15%{opacity:1}100%{transform:translate(var(--dx),var(--dy)) rotate(220deg) scale(1);opacity:0}}
+.reward-overlay{position:fixed;inset:0;z-index:120;background:radial-gradient(circle at 20% 15%,rgba(255,246,167,.24),transparent 30%),radial-gradient(circle at 80% 20%,rgba(152,223,255,.26),transparent 34%),rgba(21,18,28,.82);display:grid;place-items:center;padding:18px}.reward-shell{position:relative;width:min(92vw,640px);background:linear-gradient(165deg,#fff7d6,#ffe3ef 52%,#eaf6ff);border:2px solid rgba(255,255,255,.72);border-radius:26px;box-shadow:0 25px 70px rgba(0,0,0,.35);padding:26px 22px 20px;text-align:center;overflow:hidden}.reward-shell h2{margin:0;font-size:clamp(30px,5.8vw,44px);line-height:1.2;color:#4a324f}.reward-shell p{margin:10px 0 0;color:#614f67;font-size:17px;line-height:1.65}.reward-accent{display:inline-block;margin-top:13px;padding:10px 14px;border-radius:999px;background:#fff;border:1px solid #eddad7;font-weight:800;color:#7a4b2b}.reward-fireworks{position:absolute;inset:0;pointer-events:none;overflow:hidden}.fire-dot{position:absolute;width:8px;height:8px;border-radius:999px;opacity:0;animation:fire 1.25s ease-out forwards}.reward-actions{margin-top:16px;display:flex;justify-content:center}
+@keyframes fire{0%{transform:translate(0,0) scale(.3);opacity:1}100%{transform:translate(var(--tx),var(--ty)) scale(1.3);opacity:0}}
 @media(max-width:780px){.main{grid-template-columns:1fr}.panel{border-radius:22px}.wrap{padding-left:12px;padding-right:12px}.info{order:2}.history-item{grid-template-columns:78px 1fr auto}.top p{font-size:14px}}
-@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}.card-shell,.sun,.spark{animation:none!important;transition:none!important}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}.card-shell,.sun,.spark,.fire-dot{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="top">
     <h1>🌈 每日正向抽卡機</h1>
-    <p>每天抽一張正向肯定卡，讀出肯定句，再完成一個小挑戰。每張卡在 40 張全部抽過以前不重複；同一天重新開啟仍會看到同一張卡。</p>
-    <div class="badges"><span class="badge">40 張不重複循環</span><span class="badge">資料只存在這台裝置</span><span class="badge">適合親子晨間／睡前儀式</span></div>
+    <p>每位翻卡人每天可抽一張正向肯定卡，讀出肯定句，再完成一個小挑戰。每張卡在 40 張全部抽過以前不重複；同一位翻卡人當天重開或重按都會維持同一張卡。</p>
+    <div class="badges"><span class="badge">每位翻卡人每日 1 張</span><span class="badge">40 張不重複循環</span><span class="badge">資料只存在這台裝置</span><span class="badge">適合親子晨間／睡前儀式</span></div>
   </header>
 
   <main class="main">
@@ -43,9 +45,20 @@ body{padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
         </div>
       </div>
       <div class="drawer-row">
+      <div id="rewardOverlay" class="reward-overlay" hidden>
+        <div class="reward-shell">
+          <div id="rewardFireworks" class="reward-fireworks" aria-hidden="true"></div>
+          <h2>🎆 太棒了！</h2>
+          <p>40 張正向小卡已全部完成！</p>
+          <div class="reward-accent">恭喜獲得兌換泡澡球資格</div>
+          <p id="rewardMailStatus">正在發送通知信...</p>
+          <div class="reward-actions"><button id="rewardCloseBtn" class="btn secondary">我知道了</button></div>
+        </div>
+      </div>
         <label for="drawerSelect">翻卡人：</label>
         <select id="drawerSelect" class="drawer-select">
           <option value="">請選擇…</option>
+      const REWARD_EMAIL='ylc1979@gmail.com';
           <option value="若妍">若妍</option>
           <option value="宇樘">宇樘</option>
         </select>
@@ -78,7 +91,7 @@ body{padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
         <ul id="parentObservationList" class="observation-list"></ul>
       </div>
       <div class="history"><h3>最近的抽卡紀錄</h3><div id="historyList" class="history-list"><div class="empty">還沒有紀錄。</div></div></div>
-      <details class="settings"><summary>家長設定</summary><div class="box"><button id="redrawBtn" class="btn secondary tiny">今天重新抽一張</button><button id="resetBtn" class="btn secondary tiny">清除所有紀錄</button></div><div class="sync-fields"><label for="sheetUrl">Google Apps Script 網址（Web App URL）</label><input id="sheetUrl" type="url" placeholder="https://script.google.com/macros/s/.../exec" /><label for="familyKey">家庭代碼（同一組裝置請填一樣）</label><input id="familyKey" type="text" maxlength="60" placeholder="例如 huang-family" /></div><div class="box"><button id="syncNowBtn" class="btn secondary tiny">雲端同步</button><button id="syncHelpBtn" class="btn secondary tiny">查看 Google Sheet 設定</button></div><div id="syncStatus" class="sync-status">尚未設定雲端同步</div></details>
+      <details class="settings"><summary>家長設定</summary><div class="box"><button id="redrawBtn" class="btn secondary tiny">查看今天已抽卡片</button><button id="resetBtn" class="btn secondary tiny">清除所有紀錄</button></div><div class="sync-fields"><label for="sheetUrl">Google Apps Script 網址（Web App URL）</label><input id="sheetUrl" type="url" placeholder="https://script.google.com/macros/s/.../exec" /><label for="familyKey">家庭代碼（同一組裝置請填一樣）</label><input id="familyKey" type="text" maxlength="60" placeholder="例如 huang-family" /></div><div class="box"><button id="syncNowBtn" class="btn secondary tiny">雲端同步</button><button id="syncHelpBtn" class="btn secondary tiny">查看 Google Sheet 設定</button><button id="testRewardBtn" class="btn secondary tiny">測試 40 張獎勵流程</button></div><div id="syncStatus" class="sync-status">尚未設定雲端同步</div></details>
     </aside>
   </main>
   <div class="footer">卡牌圖像與英文內容取自使用者提供的 <i>Positive Affirmation Cards for Kids with Daily Challenges</i>。Source artwork: FeelingsHelpBox.com / © Edita Stiborova (2025).</div>
@@ -93,26 +106,68 @@ const el=id=>document.getElementById(id);
 const DOMAIN_SEQUENCE=['自我肯定','韌性／growth mindset','情緒調節','人際與同理','責任感','好奇與探索','問題解決'];
 const DOMAIN_BY_CARD=Array.from({length:CARDS.length},(_,index)=>DOMAIN_SEQUENCE[index % DOMAIN_SEQUENCE.length]);
 function dateKey(d=new Date()){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
-function loadState(){try{const s=JSON.parse(localStorage.getItem(KEY)); if(s&&Array.isArray(s.deck)) return Object.assign({deck:[],pos:0,history:{},completed:{},notes:{},drawers:{},sync:{scriptUrl:'',familyKey:''},updatedAt:0,showZh:true},s)}catch(e){} return {deck:[],pos:0,history:{},completed:{},notes:{},drawers:{},sync:{scriptUrl:'',familyKey:''},updatedAt:0,showZh:true}}
+function loadState(){
+  const base={deck:[],pos:0,history:{},completed:{},notes:{},drawers:{},historyByDrawer:{},completedByDrawer:{},notesByDrawer:{},lastDrawer:'',reward:{celebratedAt:0,emailSentAt:0,emailTo:REWARD_EMAIL},sync:{scriptUrl:'',familyKey:''},updatedAt:0,showZh:true};
+  try{
+    const s=JSON.parse(localStorage.getItem(KEY));
+    if(s&&Array.isArray(s.deck)) return migrateState(Object.assign(base,s));
+  }catch(e){}
+  return base;
+}
+function migrateState(s){
+  if(!s.historyByDrawer||typeof s.historyByDrawer!=='object')s.historyByDrawer={};
+  if(!s.completedByDrawer||typeof s.completedByDrawer!=='object')s.completedByDrawer={};
+  if(!s.notesByDrawer||typeof s.notesByDrawer!=='object')s.notesByDrawer={};
+  for(const dk of Object.keys(s.history||{})){
+    const drawer=(s.drawers&&s.drawers[dk])||'';
+    if(!drawer)continue;
+    if(!s.historyByDrawer[drawer])s.historyByDrawer[drawer]={};
+    if(s.historyByDrawer[drawer][dk]===undefined)s.historyByDrawer[drawer][dk]=s.history[dk];
+    if(!s.completedByDrawer[drawer])s.completedByDrawer[drawer]={};
+    if(s.completed&&s.completed[dk]!==undefined&&s.completedByDrawer[drawer][dk]===undefined)s.completedByDrawer[drawer][dk]=!!s.completed[dk];
+    if(!s.notesByDrawer[drawer])s.notesByDrawer[drawer]={};
+    if(s.notes&&s.notes[dk]!==undefined&&s.notesByDrawer[drawer][dk]===undefined)s.notesByDrawer[drawer][dk]=s.notes[dk];
+  }
+  if(!s.lastDrawer){
+    const ds=Object.keys(s.history||{}).sort();
+    if(ds.length&&s.drawers)s.lastDrawer=s.drawers[ds[ds.length-1]]||'';
+  }
+  if(!s.reward||typeof s.reward!=='object')s.reward={};
+  s.reward.celebratedAt=Number(s.reward.celebratedAt||0);
+  s.reward.emailSentAt=Number(s.reward.emailSentAt||0);
+  s.reward.emailTo=s.reward.emailTo||REWARD_EMAIL;
+  return s;
+}
 function save(touchUpdatedAt=true){if(touchUpdatedAt){state.updatedAt=Date.now()}localStorage.setItem(KEY,JSON.stringify(state));if(touchUpdatedAt)scheduleCloudPush()}
 function randInt(max){const a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]%max}
 function shuffled(lastId=null){const a=[...Array(CARDS.length).keys()];for(let i=a.length-1;i>0;i--){const j=randInt(i+1);[a[i],a[j]]=[a[j],a[i]]}if(lastId!==null && a[0]===lastId && a.length>1){[a[0],a[1]]=[a[1],a[0]]}return a}
-function ensureDeck(){if(!state.deck.length||state.pos>=state.deck.length){let last=null;const hs=Object.keys(state.history).sort();if(hs.length)last=state.history[hs[hs.length-1]];state.deck=shuffled(last);state.pos=0;save()}}
-function todayIndex(){return state.history[dateKey()] ?? null}
-function currentStreak(){
-  const seenDates=Object.keys(state.completed).filter(key=>state.completed[key]).sort();
+function ensureDeck(){if(!state.deck.length||state.pos>=state.deck.length){state.deck=shuffled();state.pos=0;save()}}
+function getSelectedDrawer(){return (el('drawerSelect').value||'').trim()}
+function getDrawerHistory(drawer){if(!state.historyByDrawer[drawer])state.historyByDrawer[drawer]={};return state.historyByDrawer[drawer]}
+function getDrawerCompleted(drawer){if(!state.completedByDrawer[drawer])state.completedByDrawer[drawer]={};return state.completedByDrawer[drawer]}
+function getDrawerNotes(drawer){if(!state.notesByDrawer[drawer])state.notesByDrawer[drawer]={};return state.notesByDrawer[drawer]}
+function todayIndex(drawer=getSelectedDrawer()){if(!drawer)return null;const history=getDrawerHistory(drawer);return history[dateKey()] ?? null}
+function currentStreak(drawer=getSelectedDrawer()){
+  if(!drawer)return 0;
+  const completed=getDrawerCompleted(drawer);
+  const seenDates=Object.keys(completed).filter(key=>completed[key]).sort();
   if(!seenDates.length)return 0;
   let streak=0;
   let cursor=new Date();
   while(true){
     const key=dateKey(cursor);
-    if(state.completed[key]){streak++;cursor.setDate(cursor.getDate()-1);continue}
+    if(completed[key]){streak++;cursor.setDate(cursor.getDate()-1);continue}
     break;
   }
   return streak;
 }
 function getExploredCards(){
-  return [...new Set(Object.values(state.history).map(v=>Number(v)))];
+  const all=[];
+  for(const drawer of Object.keys(state.historyByDrawer||{})){
+    const history=state.historyByDrawer[drawer]||{};
+    all.push(...Object.values(history).map(v=>Number(v)));
+  }
+  return [...new Set(all)];
 }
 function getCardDomain(cardIndex){
   return DOMAIN_BY_CARD[Number(cardIndex)] || '自我肯定';
@@ -132,12 +187,16 @@ function renderGrowthMap(){
 function renderParentObservation(){
   const list=el('parentObservationList');
   const domainDates=new Map();
-  const sortedDates=Object.keys(state.history).sort().reverse();
-  for(const date of sortedDates){
-    const idx=Number(state.history[date]);
-    const domain=getCardDomain(idx);
-    if(!domainDates.has(domain) || new Date(date) > new Date(domainDates.get(domain).date)){
-      domainDates.set(domain,{date});
+  const entries=[];
+  for(const drawer of Object.keys(state.historyByDrawer||{})){
+    const history=state.historyByDrawer[drawer]||{};
+    for(const date of Object.keys(history))entries.push({date,drawer,idx:Number(history[date])});
+  }
+  entries.sort((a,b)=>new Date(b.date)-new Date(a.date));
+  for(const entry of entries){
+    const domain=getCardDomain(entry.idx);
+    if(!domainDates.has(domain) || new Date(entry.date) > new Date(domainDates.get(domain).date)){
+      domainDates.set(domain,{date:entry.date});
     }
   }
   const domains=DOMAIN_SEQUENCE.map(name=>({name, last:domainDates.get(name)?.date || null}));
@@ -158,15 +217,154 @@ function getSyncConfig(){const cfg=state.sync||{};return {scriptUrl:(cfg.scriptU
 function assertSyncConfig(cfg){if(!cfg.scriptUrl||!cfg.familyKey)throw new Error('請先設定 Google Apps Script 網址與家庭代碼');if(!cfg.scriptUrl.includes('/exec'))throw new Error('請貼上 Web App URL（需包含 /exec）')}
 async function parseJsonOrThrow(res){const text=await res.text();let data=null;try{data=JSON.parse(text)}catch(e){throw new Error('伺服器回傳格式錯誤，請確認 Apps Script 已正確部署為 Web App')}if(data&&data.ok===false)throw new Error(data.message||'雲端服務回傳失敗');return data}
 function loadByJsonp(url,familyKey){return new Promise((resolve,reject)=>{const callbackName=`syncCb_${Date.now()}_${Math.floor(Math.random()*10000)}`;const script=document.createElement('script');const cleanup=()=>{if(script.parentNode)script.parentNode.removeChild(script);try{delete window[callbackName]}catch(e){window[callbackName]=undefined}};window[callbackName]=(payload)=>{cleanup();resolve(payload)};script.onerror=()=>{cleanup();reject(new Error('無法讀取雲端資料，請確認 Web App 權限為 Anyone'))};const u=new URL(url);u.searchParams.set('action','load');u.searchParams.set('familyKey',familyKey);u.searchParams.set('callback',callbackName);script.src=u.toString();document.body.appendChild(script)})}
-function normalizeRemoteState(raw){if(!raw||typeof raw!=='object')return null;const base={deck:[],pos:0,history:{},completed:{},notes:{},drawers:{},showZh:true,updatedAt:0};const merged=Object.assign(base,raw);if(!Array.isArray(merged.deck))merged.deck=[];if(typeof merged.pos!=='number')merged.pos=0;if(!merged.history||typeof merged.history!=='object')merged.history={};if(!merged.completed||typeof merged.completed!=='object')merged.completed={};if(!merged.notes||typeof merged.notes!=='object')merged.notes={};if(!merged.drawers||typeof merged.drawers!=='object')merged.drawers={};merged.updatedAt=Number(merged.updatedAt||0);return merged}
-function exportStateForCloud(){return {deck:state.deck,pos:state.pos,history:state.history,completed:state.completed,notes:state.notes,drawers:state.drawers,showZh:state.showZh,updatedAt:state.updatedAt}}
-function renderFromState(){const existing=todayIndex();if(existing!==null){showCard(existing,false);return}current=null;el('cardShell').classList.remove('revealed');el('drawBtn').disabled=false;el('drawBtn').textContent='✨ 抽取今天的卡';el('completeBtn').disabled=true;el('completeBtn').textContent='✓ 我完成今日挑戰了';el('infoContent').hidden=true;el('infoPlaceholder').hidden=false;el('drawerSelect').disabled=false;if(state.drawers[dateKey()])el('drawerSelect').value=state.drawers[dateKey()];else el('drawerSelect').value='';applyZh();updateStats()}
+function normalizeRemoteState(raw){if(!raw||typeof raw!=='object')return null;const base={deck:[],pos:0,history:{},completed:{},notes:{},drawers:{},historyByDrawer:{},completedByDrawer:{},notesByDrawer:{},lastDrawer:'',reward:{celebratedAt:0,emailSentAt:0,emailTo:REWARD_EMAIL},showZh:true,updatedAt:0};const merged=Object.assign(base,raw);if(!Array.isArray(merged.deck))merged.deck=[];if(typeof merged.pos!=='number')merged.pos=0;if(!merged.history||typeof merged.history!=='object')merged.history={};if(!merged.completed||typeof merged.completed!=='object')merged.completed={};if(!merged.notes||typeof merged.notes!=='object')merged.notes={};if(!merged.drawers||typeof merged.drawers!=='object')merged.drawers={};if(!merged.historyByDrawer||typeof merged.historyByDrawer!=='object')merged.historyByDrawer={};if(!merged.completedByDrawer||typeof merged.completedByDrawer!=='object')merged.completedByDrawer={};if(!merged.notesByDrawer||typeof merged.notesByDrawer!=='object')merged.notesByDrawer={};if(!merged.reward||typeof merged.reward!=='object')merged.reward={};merged.updatedAt=Number(merged.updatedAt||0);return migrateState(merged)}
+function exportStateForCloud(){return {deck:state.deck,pos:state.pos,history:state.history,completed:state.completed,notes:state.notes,drawers:state.drawers,historyByDrawer:state.historyByDrawer,completedByDrawer:state.completedByDrawer,notesByDrawer:state.notesByDrawer,lastDrawer:state.lastDrawer,reward:state.reward,showZh:state.showZh,updatedAt:state.updatedAt}}
+function clearCardView(promptText){
+  current=null;
+  el('cardShell').classList.remove('revealed');
+  el('drawerSelect').disabled=false;
+  el('drawBtn').disabled=!getSelectedDrawer();
+  el('drawBtn').textContent=getSelectedDrawer()?'✨ 抽取今天的卡':'請先選擇翻卡人';
+  el('completeBtn').disabled=true;
+  el('completeBtn').textContent='✓ 我完成今日挑戰了';
+  el('infoContent').hidden=true;
+  el('infoPlaceholder').hidden=false;
+  if(promptText)el('infoPlaceholder').textContent=promptText;
+}
+function renderFromState(){
+  if(state.lastDrawer)el('drawerSelect').value=state.lastDrawer;
+  el('drawerSelect').disabled=false;
+  renderForSelectedDrawer();
+  maybeCelebrateReward();
+}
+function renderForSelectedDrawer(){
+  const drawer=getSelectedDrawer();
+  el('drawerSelect').disabled=false;
+  if(!drawer){
+    clearCardView('請先選擇翻卡人，再抽取今天的卡片。');
+    applyZh();
+    updateStats();
+    return;
+  }
+  const existing=todayIndex(drawer);
+  if(existing!==null){showCard(existing,false,drawer);return}
+  ensureDeck();
+  const idx=state.deck[state.pos++];
+  getDrawerHistory(drawer)[dateKey()]=idx;
+  state.lastDrawer=drawer;
+  save();
+  showCard(idx,false,drawer);
+}
 function mergeRemoteState(remote){const normalized=normalizeRemoteState(remote);if(!normalized)return false;const localUpdatedAt=Number(state.updatedAt||0);if(normalized.updatedAt<=localUpdatedAt)return false;const keepSync=state.sync||{scriptUrl:'',familyKey:''};state=Object.assign({},state,normalized,{sync:keepSync});save(false);return true}
-async function pullFromCloud(silent=false){const cfg=getSyncConfig();if(!cfg.scriptUrl||!cfg.familyKey){if(!silent)setSyncStatus('請先設定 Google Apps Script 網址與家庭代碼',true);return false}const loadUrl=new URL(cfg.scriptUrl);loadUrl.searchParams.set('action','load');loadUrl.searchParams.set('familyKey',cfg.familyKey);const res=await fetch(loadUrl.toString(),{method:'GET'});if(!res.ok)throw new Error('無法讀取雲端資料');const data=await res.json();const remote=data&&data.state?data.state:null;const changed=mergeRemoteState(remote);if(changed)renderFromState();if(!silent)setSyncStatus(changed?'已從雲端更新到最新':'雲端資料已是最新');return changed}
 async function pullFromCloud(silent=false){const cfg=getSyncConfig();try{assertSyncConfig(cfg)}catch(err){if(!silent)setSyncStatus(err.message,true);return false}try{const loadUrl=new URL(cfg.scriptUrl);loadUrl.searchParams.set('action','load');loadUrl.searchParams.set('familyKey',cfg.familyKey);const res=await fetch(loadUrl.toString(),{method:'GET',cache:'no-store'});if(!res.ok)throw new Error('無法讀取雲端資料');const data=await parseJsonOrThrow(res);const remote=data&&data.state?data.state:null;const changed=mergeRemoteState(remote);if(changed)renderFromState();if(!silent)setSyncStatus(changed?'已從雲端更新到最新':'雲端資料已是最新');return changed}catch(primaryErr){const data=await loadByJsonp(cfg.scriptUrl,cfg.familyKey);const remote=data&&data.state?data.state:null;const changed=mergeRemoteState(remote);if(changed)renderFromState();if(!silent)setSyncStatus(changed?'已從雲端更新到最新':'雲端資料已是最新');return changed}}
 async function pushToCloud(silent=false){const cfg=getSyncConfig();try{assertSyncConfig(cfg)}catch(err){if(!silent)setSyncStatus(err.message,true);return false}const payload={action:'save',familyKey:cfg.familyKey,state:exportStateForCloud()};try{const res=await fetch(cfg.scriptUrl,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});if(!res.ok)throw new Error('無法寫入雲端資料');const data=await parseJsonOrThrow(res);if(data&&data.updatedAt&&Number(data.updatedAt)>Number(state.updatedAt||0)){state.updatedAt=Number(data.updatedAt);save(false)}if(!silent)setSyncStatus('已成功同步到雲端');return true}catch(primaryErr){await fetch(cfg.scriptUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});if(!silent)setSyncStatus('已送出同步請求（請稍後在另一台按一次「雲端同步」更新）');return true}}
 async function syncNow(){try{setSyncStatus('同步中...');await pullFromCloud(true);await pushToCloud(true);setSyncStatus('同步完成，跨裝置可見')}catch(err){setSyncStatus(`同步失敗：${err.message}`,true)}}
 function scheduleCloudPush(){const cfg=getSyncConfig();if(!cfg.scriptUrl||!cfg.familyKey)return;if(syncTimer)clearTimeout(syncTimer);syncTimer=setTimeout(()=>{pushToCloud(true).then(()=>setSyncStatus('已自動同步到雲端')).catch(err=>setSyncStatus(`自動同步失敗：${err.message}`,true))},900)}
+function isRewardUnlocked(){return getExploredCards().length>=CARDS.length}
+function launchFireworks(){
+  const box=el('rewardFireworks');
+  if(!box)return;
+  box.innerHTML='';
+  const colors=['#ffe06e','#ff9f67','#7fd8ff','#ff86bd','#b3ff9d','#ffd2f2'];
+  for(let b=0;b<7;b++){
+    const ox=10+Math.random()*80;
+    const oy=12+Math.random()*62;
+    for(let i=0;i<28;i++){
+      const dot=document.createElement('span');
+      const angle=(Math.PI*2*i)/28;
+      const dist=38+Math.random()*95;
+      dot.className='fire-dot';
+      dot.style.left=`${ox}%`;
+      dot.style.top=`${oy}%`;
+      dot.style.background=colors[(i+b)%colors.length];
+      dot.style.setProperty('--tx',`${Math.cos(angle)*dist}px`);
+      dot.style.setProperty('--ty',`${Math.sin(angle)*dist}px`);
+      dot.style.animationDelay=`${(b*0.14).toFixed(2)}s`;
+      box.appendChild(dot);
+    }
+  }
+}
+function showRewardOverlay(){
+  const overlay=el('rewardOverlay');
+  if(!overlay)return;
+  overlay.hidden=false;
+  const statusEl=el('rewardMailStatus');
+  if(statusEl){
+    statusEl.textContent=state.reward.emailSentAt?`已寄出通知信到 ${state.reward.emailTo||REWARD_EMAIL}`:'正在發送通知信...';
+  }
+  launchFireworks();
+}
+function hideRewardOverlay(){const overlay=el('rewardOverlay');if(overlay)overlay.hidden=true}
+async function sendRewardNoticeEmail(){
+  const cfg=getSyncConfig();
+  const statusEl=el('rewardMailStatus');
+  if(!cfg.scriptUrl||!cfg.familyKey){
+    if(statusEl)statusEl.textContent='已達成 40 張！請先設定雲端同步，才能自動發送通知信。';
+    setSyncStatus('已達成40張，但尚未設定雲端同步，通知信尚未寄出',true);
+    return false;
+  }
+  const payload={action:'notifyReward',familyKey:cfg.familyKey,to:REWARD_EMAIL,drawer:getSelectedDrawer()||state.lastDrawer||'',achievedAt:new Date().toISOString()};
+  try{
+    const res=await fetch(cfg.scriptUrl,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
+    if(!res.ok)throw new Error('通知服務無法連線');
+    const data=await parseJsonOrThrow(res);
+    state.reward.emailSentAt=Number(data.sentAt||Date.now());
+    state.reward.emailTo=REWARD_EMAIL;
+    save(false);
+    if(statusEl)statusEl.textContent=`已寄出通知信到 ${REWARD_EMAIL}`;
+    setSyncStatus(`兌換通知信已寄送至 ${REWARD_EMAIL}`);
+    return true;
+  }catch(primaryErr){
+    await fetch(cfg.scriptUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
+    state.reward.emailSentAt=Date.now();
+    state.reward.emailTo=REWARD_EMAIL;
+    save(false);
+    if(statusEl)statusEl.textContent=`已送出寄信請求到 ${REWARD_EMAIL}`;
+    setSyncStatus(`已送出通知信請求至 ${REWARD_EMAIL}`);
+    return true;
+  }
+}
+async function sendRewardTestEmail(){
+  const cfg=getSyncConfig();
+  const statusEl=el('rewardMailStatus');
+  if(!cfg.scriptUrl||!cfg.familyKey){
+    if(statusEl)statusEl.textContent='測試模式：請先設定雲端同步，才能寄送測試通知信。';
+    setSyncStatus('測試模式：尚未設定雲端同步',true);
+    return false;
+  }
+  const payload={action:'notifyReward',familyKey:cfg.familyKey,to:REWARD_EMAIL,drawer:getSelectedDrawer()||state.lastDrawer||'',achievedAt:new Date().toISOString(),isTest:true};
+  try{
+    const res=await fetch(cfg.scriptUrl,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
+    if(!res.ok)throw new Error('測試通知服務無法連線');
+    await parseJsonOrThrow(res);
+    if(statusEl)statusEl.textContent=`測試通知信已寄出到 ${REWARD_EMAIL}`;
+    setSyncStatus(`測試通知信已寄送至 ${REWARD_EMAIL}`);
+    return true;
+  }catch(primaryErr){
+    await fetch(cfg.scriptUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
+    if(statusEl)statusEl.textContent=`已送出測試寄信請求到 ${REWARD_EMAIL}`;
+    setSyncStatus(`已送出測試通知信請求至 ${REWARD_EMAIL}`);
+    return true;
+  }
+}
+function testRewardFlow(){
+  if(!confirm('要測試 40 張完成慶祝畫面與寄信流程嗎？'))return;
+  showRewardOverlay();
+  const statusEl=el('rewardMailStatus');
+  if(statusEl)statusEl.textContent='測試模式：正在發送通知信...';
+  sendRewardTestEmail().catch(err=>setSyncStatus(`測試寄信失敗：${err.message}`,true));
+}
+function maybeCelebrateReward(){
+  if(!isRewardUnlocked())return;
+  if(!state.reward.celebratedAt){
+    state.reward.celebratedAt=Date.now();
+    save();
+    showRewardOverlay();
+  }
+  if(!state.reward.emailSentAt){
+    sendRewardNoticeEmail().catch(err=>setSyncStatus(`通知信寄送失敗：${err.message}`,true));
+  }
+}
 function scriptTemplate(){return `function doGet(e) {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('sync') || SpreadsheetApp.getActiveSpreadsheet().insertSheet('sync');
   if (sheet.getLastRow() === 0) sheet.appendRow(['familyKey','stateJson','updatedAt']);
@@ -187,6 +385,15 @@ function doPost(e) {
   const body = JSON.parse(e.postData.contents || '{}');
   const action = (body.action || '').trim();
   const familyKey = (body.familyKey || '').trim();
+  if (action === 'notifyReward') {
+    const to = String(body.to || 'ylc1979@gmail.com').trim() || 'ylc1979@gmail.com';
+    const drawer = String(body.drawer || '').trim();
+    const achievedAt = String(body.achievedAt || '').trim();
+    const isTest = !!body.isTest;
+    if (!familyKey) return json_({ ok: false, message: 'Invalid payload' });
+    sendRewardMail_(to, familyKey, drawer, achievedAt, isTest);
+    return json_({ ok: true, sentAt: Date.now() });
+  }
   const state = body.state || {};
   if (action !== 'save' || !familyKey) return json_({ ok: false, message: 'Invalid payload' });
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('sync') || SpreadsheetApp.getActiveSpreadsheet().insertSheet('sync');
@@ -221,36 +428,80 @@ function jsonp_(callback, obj) {
   return ContentService
     .createTextOutput(callback + '(' + JSON.stringify(obj) + ')')
     .setMimeType(ContentService.MimeType.JAVASCRIPT);
+}
+
+function sendRewardMail_(to, familyKey, drawer, achievedAt, isTest) {
+  const who = drawer ? '翻卡人：' + drawer : '翻卡人：未指定';
+  const when = achievedAt || new Date().toISOString();
+  const subject = isTest ? '【測試】每日正向抽卡機｜40 張完成通知' : '每日正向抽卡機｜40 張完成通知';
+  const body = [
+    isTest ? '這是一封測試通知信。' : '40 張正向小卡已完成。',
+    '40 張正向小卡已完成。',
+    '',
+    '家庭代碼：' + familyKey,
+    who,
+    '完成時間：' + when,
+    '',
+    '恭喜獲得兌換泡澡球資格。'
+  ].join('\n');
+  MailApp.sendEmail(to, subject, body);
 }`}
 function showSyncHelp(){alert('請建立一個 Google Sheet，開啟 Apps Script，貼上範本程式並部署成 Web App（Anyone 可存取）。每次修改 Apps Script 後要「新增部署新版本」。接著把 /exec 的 Web App URL 貼到本頁。');console.log(scriptTemplate())}
 function autoSyncOnLoad(){const cfg=getSyncConfig();if(!cfg.scriptUrl||!cfg.familyKey){setSyncStatus('尚未設定雲端同步');return}syncNow()}
-function drawToday(){const dk=dateKey();let idx=state.history[dk];if(idx===undefined){const drawer=el('drawerSelect').value;if(!drawer){alert('請先選擇翻卡人！');return}ensureDeck();idx=state.deck[state.pos++];state.history[dk]=idx;state.drawers[dk]=drawer;save();burst()}showCard(idx,true)}
-function showCard(idx,animate=false){current=idx;const c=CARDS[idx];el('cardImage').src='data:image/jpeg;base64,'+c.img;el('enTitle').textContent=c.en;el('zhTitle').textContent=c.zh;el('enChallenge').textContent=c.challenge;el('zhChallenge').textContent=c.zhChallenge;el('infoPlaceholder').hidden=true;el('infoContent').hidden=false;el('reflection').value=state.notes[dateKey()]||'';const _dk=dateKey();if(state.drawers[_dk])el('drawerSelect').value=state.drawers[_dk];el('drawerSelect').disabled=true;el('cardShell').classList.add('revealed');el('drawBtn').textContent='🌟 今天的卡已抽出';el('drawBtn').disabled=true;syncComplete();applyZh();updateStats();if(animate)setTimeout(()=>el('infoContent').scrollIntoView({behavior:'smooth',block:'nearest'}),500)}
-function syncComplete(){const done=!!state.completed[dateKey()];el('completeBtn').disabled=current===null;el('completeBtn').textContent=done?'🎉 今日挑戰已完成':'✓ 我完成今日挑戰了';el('completeBtn').classList.toggle('primary',done)}
+function drawToday(){
+  const drawer=getSelectedDrawer();
+  if(!drawer){alert('請先選擇翻卡人！');return}
+  const dk=dateKey();
+  const history=getDrawerHistory(drawer);
+  let idx=history[dk];
+  if(idx===undefined){
+    ensureDeck();
+    idx=state.deck[state.pos++];
+    history[dk]=idx;
+    state.lastDrawer=drawer;
+    save();
+    burst();
+    maybeCelebrateReward();
+  }
+  showCard(idx,true,drawer);
+}
+function showCard(idx,animate=false,drawer=getSelectedDrawer()){current=idx;const c=CARDS[idx];el('cardImage').src='data:image/jpeg;base64,'+c.img;el('enTitle').textContent=c.en;el('zhTitle').textContent=c.zh;el('enChallenge').textContent=c.challenge;el('zhChallenge').textContent=c.zhChallenge;el('infoPlaceholder').hidden=true;el('infoContent').hidden=false;el('drawerSelect').disabled=false;const notes=getDrawerNotes(drawer);el('reflection').value=notes[dateKey()]||'';el('cardShell').classList.add('revealed');el('drawBtn').textContent='🌟 這位今天已抽過';el('drawBtn').disabled=true;syncComplete();applyZh();updateStats();if(animate)setTimeout(()=>el('infoContent').scrollIntoView({behavior:'smooth',block:'nearest'}),500)}
+function syncComplete(){const drawer=getSelectedDrawer();const done=drawer?!!getDrawerCompleted(drawer)[dateKey()]:false;el('completeBtn').disabled=current===null||!drawer;el('completeBtn').textContent=done?'🎉 今日挑戰已完成':'✓ 我完成今日挑戰了';el('completeBtn').classList.toggle('primary',done)}
 function applyZh(){const show=state.showZh!==false;el('zhTitle').style.display=show?'block':'none';el('zhChallenge').style.display=show?'inline':'none';el('zhToggle').checked=show}
 function updateStats(){
   const remaining=Math.max(0,CARDS.length-state.pos);
-  const done=Object.values(state.completed).filter(Boolean).length;
+  const drawer=getSelectedDrawer();
+  const done=drawer?Object.values(getDrawerCompleted(drawer)).filter(Boolean).length:0;
   const explored=getExploredCards().length;
-  const streak=currentStreak();
+  const streak=currentStreak(drawer);
   el('deckStat').textContent=`本輪剩 ${remaining} 張未抽`;
-  el('doneStat').textContent=`已完成 ${done} 天`;
-  el('streakStat').textContent = streak > 0 ? `🔥 已連續完成 ${streak} 天` : '🌱 今天是正向習慣的開始';
+  el('doneStat').textContent=drawer?`已完成 ${done} 天`:'請先選擇翻卡人';
+  el('streakStat').textContent = drawer ? (streak > 0 ? `🔥 已連續完成 ${streak} 天` : '🌱 今天是正向習慣的開始') : '🌱 選擇翻卡人後開始今日儀式';
   el('growthMapCount').textContent=`已探索 ${explored} / ${CARDS.length} 種正向力量`;
   renderGrowthMap();
   renderParentObservation();
   renderHistory();
 }
-function renderHistory(){const box=el('historyList');const dates=Object.keys(state.history).sort().reverse().slice(0,7);if(!dates.length){box.innerHTML='<div class="empty">還沒有紀錄。</div>';return}box.innerHTML='';for(const d of dates){const c=CARDS[state.history[d]];const item=document.createElement('div');item.className='history-item';const drawerName=state.drawers&&state.drawers[d]?` ${state.drawers[d]}`:'';item.innerHTML=`<span class="date">${d.slice(5).replace('-','/')}${drawerName}</span><span>${state.showZh!==false?c.zh:c.en}</span><span class="check">${state.completed[d]?'✅':'○'}</span>`;box.appendChild(item)}}
-function completeToday(){if(current===null)return;const dk=dateKey();state.completed[dk]=!state.completed[dk];save();syncComplete();updateStats();if(state.completed[dk])burst()}
+function renderHistory(){const box=el('historyList');const entries=[];for(const drawer of Object.keys(state.historyByDrawer||{})){const history=state.historyByDrawer[drawer]||{};const completed=state.completedByDrawer[drawer]||{};for(const d of Object.keys(history)){entries.push({date:d,drawer,idx:history[d],done:!!completed[d]})}}entries.sort((a,b)=>new Date(b.date)-new Date(a.date));const recent=entries.slice(0,10);if(!recent.length){box.innerHTML='<div class="empty">還沒有紀錄。</div>';return}box.innerHTML='';for(const row of recent){const c=CARDS[row.idx];const item=document.createElement('div');item.className='history-item';item.innerHTML=`<span class="date">${row.date.slice(5).replace('-','/')} ${row.drawer}</span><span>${state.showZh!==false?c.zh:c.en}</span><span class="check">${row.done?'✅':'○'}</span>`;box.appendChild(item)}}
+function completeToday(){if(current===null)return;const drawer=getSelectedDrawer();if(!drawer)return;const dk=dateKey();const completed=getDrawerCompleted(drawer);completed[dk]=!completed[dk];state.lastDrawer=drawer;save();syncComplete();updateStats();if(completed[dk])burst()}
 function burst(){const symbols=['✨','⭐','🌈','💛','🌸'];for(let i=0;i<18;i++){const s=document.createElement('span');s.className='spark';s.textContent=symbols[i%symbols.length];s.style.left=(45+Math.random()*10)+'vw';s.style.top=(40+Math.random()*12)+'vh';s.style.setProperty('--dx',(Math.random()*420-210)+'px');s.style.setProperty('--dy',(Math.random()*360-220)+'px');document.body.appendChild(s);setTimeout(()=>s.remove(),1100)}}
-function redrawToday(){const dk=dateKey();if(state.history[dk]===undefined){drawToday();return}if(!confirm('確定要放回今天的結果並重新抽一張嗎？原本那張在本輪仍視為已抽過。'))return;delete state.history[dk];delete state.completed[dk];delete state.notes[dk];delete state.drawers[dk];current=null;save();el('cardShell').classList.remove('revealed');el('drawBtn').disabled=false;el('drawBtn').textContent='✨ 抽取今天的卡';el('completeBtn').disabled=true;el('infoContent').hidden=true;el('infoPlaceholder').hidden=false;el('drawerSelect').disabled=false;setTimeout(drawToday,250)}
+function redrawToday(){
+  const drawer=getSelectedDrawer();
+  if(!drawer){alert('請先選擇翻卡人。');return}
+  const idx=todayIndex(drawer);
+  if(idx===null){drawToday();return}
+  alert('同一位翻卡人當天只能抽一次，今天卡片不會改變。');
+  showCard(idx,false,drawer);
+}
 function resetAll(){if(!confirm('這會清除所有抽卡、完成與筆記紀錄。確定嗎？'))return;if(!confirm('最後確認：真的要全部清除嗎？'))return;localStorage.removeItem(KEY);state=loadState();location.reload()}
-el('drawBtn').addEventListener('click',drawToday);el('cardShell').addEventListener('click',()=>{if(todayIndex()===null)drawToday()});el('cardShell').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&todayIndex()===null){e.preventDefault();drawToday()}});el('completeBtn').addEventListener('click',completeToday);el('zhToggle').addEventListener('change',e=>{state.showZh=e.target.checked;save();applyZh();renderHistory()});el('reflection').addEventListener('input',e=>{if(current===null)return;state.notes[dateKey()]=e.target.value;save()});el('redrawBtn').addEventListener('click',redrawToday);el('resetBtn').addEventListener('click',resetAll);
+el('drawBtn').addEventListener('click',drawToday);el('cardShell').addEventListener('click',()=>{if(todayIndex()===null)drawToday()});el('cardShell').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&todayIndex()===null){e.preventDefault();drawToday()}});el('completeBtn').addEventListener('click',completeToday);el('zhToggle').addEventListener('change',e=>{state.showZh=e.target.checked;save();applyZh();renderHistory()});el('reflection').addEventListener('input',e=>{if(current===null)return;const drawer=getSelectedDrawer();if(!drawer)return;getDrawerNotes(drawer)[dateKey()]=e.target.value;state.lastDrawer=drawer;save()});el('redrawBtn').addEventListener('click',redrawToday);el('resetBtn').addEventListener('click',resetAll);
+el('rewardCloseBtn').addEventListener('click',hideRewardOverlay);
+el('drawerSelect').addEventListener('change',e=>{state.lastDrawer=(e.target.value||'').trim();save(false);renderForSelectedDrawer()});
 el('sheetUrl').addEventListener('change',e=>{state.sync.scriptUrl=(e.target.value||'').trim();save(false);setSyncStatus('已儲存雲端網址，請按「雲端同步」')});
 el('familyKey').addEventListener('change',e=>{state.sync.familyKey=(e.target.value||'').trim();save(false);setSyncStatus('已儲存家庭代碼，請按「雲端同步」')});
 el('syncNowBtn').addEventListener('click',syncNow);
 el('syncHelpBtn').addEventListener('click',showSyncHelp);
+el('testRewardBtn').addEventListener('click',testRewardFlow);
 el('sheetUrl').value=(state.sync&&state.sync.scriptUrl)||'';
 el('familyKey').value=(state.sync&&state.sync.familyKey)||'';
 renderFromState();
