@@ -248,12 +248,9 @@ function renderForSelectedDrawer(){
   }
   const existing=todayIndex(drawer);
   if(existing!==null){showCard(existing,false,drawer);return}
-  ensureDeck();
-  const idx=state.deck[state.pos++];
-  getDrawerHistory(drawer)[dateKey()]=idx;
-  state.lastDrawer=drawer;
-  save();
-  showCard(idx,false,drawer);
+  clearCardView(`${drawer} 今天還沒抽卡，點一下卡片或按「抽取今天的卡」翻開吧！`);
+  applyZh();
+  updateStats();
 }
 function mergeRemoteState(remote){const normalized=normalizeRemoteState(remote);if(!normalized)return false;const localUpdatedAt=Number(state.updatedAt||0);if(normalized.updatedAt<=localUpdatedAt)return false;const keepSync=state.sync||{scriptUrl:'',familyKey:''};state=Object.assign({},state,normalized,{sync:keepSync});save(false);return true}
 async function pullFromCloud(silent=false){const cfg=getSyncConfig();try{assertSyncConfig(cfg)}catch(err){if(!silent)setSyncStatus(err.message,true);return false}try{const loadUrl=new URL(cfg.scriptUrl);loadUrl.searchParams.set('action','load');loadUrl.searchParams.set('familyKey',cfg.familyKey);const res=await fetch(loadUrl.toString(),{method:'GET',cache:'no-store'});if(!res.ok)throw new Error('無法讀取雲端資料');const data=await parseJsonOrThrow(res);const remote=data&&data.state?data.state:null;const changed=mergeRemoteState(remote);if(changed)renderFromState();if(!silent)setSyncStatus(changed?'已從雲端更新到最新':'雲端資料已是最新');return changed}catch(primaryErr){const data=await loadByJsonp(cfg.scriptUrl,cfg.familyKey);const remote=data&&data.state?data.state:null;const changed=mergeRemoteState(remote);if(changed)renderFromState();if(!silent)setSyncStatus(changed?'已從雲端更新到最新':'雲端資料已是最新');return changed}}
